@@ -99,7 +99,7 @@ class Conditional implements IComparable
     /**
      * Condition.
      *
-     * @var (bool|float|int|string)[]
+     * @var string[]
      */
     private $condition = [];
 
@@ -223,7 +223,7 @@ class Conditional implements IComparable
     /**
      * Get Conditions.
      *
-     * @return (bool|float|int|string)[]
+     * @return string[]
      */
     public function getConditions()
     {
@@ -233,7 +233,7 @@ class Conditional implements IComparable
     /**
      * Set Conditions.
      *
-     * @param bool|float|int|string|(bool|float|int|string)[] $conditions Condition
+     * @param bool|float|int|string|string[] $conditions Condition
      *
      * @return $this
      */
@@ -250,7 +250,7 @@ class Conditional implements IComparable
     /**
      * Add Condition.
      *
-     * @param bool|float|int|string $condition Condition
+     * @param string $condition Condition
      *
      * @return $this
      */
@@ -276,7 +276,7 @@ class Conditional implements IComparable
      *
      * @return $this
      */
-    public function setStyle(Style $style)
+    public function setStyle(?Style $style = null)
     {
         $this->style = $style;
 

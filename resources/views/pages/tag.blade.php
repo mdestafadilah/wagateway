@@ -117,13 +117,13 @@
                 </div>
                 <div class="modal-body">
                     <form action="{{route('fetch.groups')}}" method="POST" enctype="multipart/form-data">
-                        @csrfπ
+                        @csrf
                         <label for="" class="form-label">Sender ?</label>
-                      @if(Session::has('selectedDevice'))
-                        <input type="text" name="sender" class="form-control" id="sender" value="{{Session::get('selectedDevice')}}" readonly>
-                        @else
-                        <input type="text" name="senderrr" value="Please Select Sender Firsst" class="form-control" id="sender" required>
-                        @endif
+                        <select id="tag" name="sender" class="js-states form-control" tabindex="-1" style="display: none; width: 100%" required>
+                            @foreach ($senders as $sender)
+                              <option value="{{$sender->body}}">{{$sender->body}}</option>
+                            @endforeach
+                         </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

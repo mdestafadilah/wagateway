@@ -123,11 +123,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
             $file = 'compress.zlib://'.$file;
         }
 
-        if (!$data = unserialize(file_get_contents($file))) {
-            return null;
-        }
-
-        return $this->createProfileFromData($token, $data);
+        return $this->createProfileFromData($token, unserialize(file_get_contents($file)));
     }
 
     /**
@@ -299,11 +295,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
                 $file = 'compress.zlib://'.$file;
             }
 
-            if (!$childData = unserialize(file_get_contents($file))) {
-                continue;
-            }
-
-            $profile->addChild($this->createProfileFromData($token, $childData, $profile));
+            $profile->addChild($this->createProfileFromData($token, unserialize(file_get_contents($file)), $profile));
         }
 
         return $profile;

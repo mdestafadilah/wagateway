@@ -18,7 +18,7 @@ class CreateAutorepliesTable extends Migration
             $table->foreignId('user_id');
             $table->string('device',20);
             $table->string('keyword');
-            $table->enum('type',['text','image','button','template','list']);
+            $table->enum('type',['text','image','button','template']);
             $table->json('reply');
             $table->timestamps();
         });

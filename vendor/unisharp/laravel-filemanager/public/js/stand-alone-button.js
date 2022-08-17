@@ -1,9 +1,9 @@
-(function( $ ){
+(function ($) {
 
-  $.fn.filemanager = function(type, options) {
+  $.fn.filemanager = function (type, options) {
     type = type || 'file';
 
-    this.on('click', function(e) {
+    this.on('click', function (e) {
       var route_prefix = (options && options.prefix) ? options.prefix : '/filemanager';
       var target_input = $('#' + $(this).data('input'));
       var target_preview = $('#' + $(this).data('preview'));

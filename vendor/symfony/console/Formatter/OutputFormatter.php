@@ -140,10 +140,6 @@ class OutputFormatter implements WrappableOutputFormatterInterface
      */
     public function formatAndWrap(?string $message, int $width)
     {
-        if (null === $message) {
-            return '';
-        }
-
         $offset = 0;
         $output = '';
         $openTagRegex = '[a-z](?:[^\\\\<>]*+ | \\\\.)*';

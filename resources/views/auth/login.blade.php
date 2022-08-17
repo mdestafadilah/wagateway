@@ -7,7 +7,7 @@
         </div>
         <div class="app-auth-container">
             <div class="logo">
-                <a href="/">WAMD</a>
+                <a href="index.html">MPWA</a>
             </div>
            @if (session()->has('alert'))
               <x-alert>

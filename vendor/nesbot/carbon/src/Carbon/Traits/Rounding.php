@@ -52,7 +52,7 @@ trait Rounding
             'millisecond' => [1000, 'microsecond'],
         ];
         $normalizedUnit = static::singularUnit($unit);
-        $ranges = array_merge(static::getRangesByUnit($this->daysInMonth), [
+        $ranges = array_merge(static::getRangesByUnit(), [
             // @call roundUnit
             'microsecond' => [0, 999999],
         ]);
@@ -93,7 +93,7 @@ trait Rounding
                 $delta = $maximum + 1 - $minimum;
                 $factor /= $delta;
                 $fraction *= $delta;
-                $arguments[0] += ($this->$unit - $minimum) * $factor;
+                $arguments[0] += $this->$unit * $factor;
                 $changes[$unit] = round(
                     $minimum + ($fraction ? $fraction * $function(($this->$unit - $minimum) / $fraction) : 0)
                 );

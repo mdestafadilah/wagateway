@@ -39,7 +39,6 @@ class InstallCommand extends Command
 
         $this->buildDockerCompose($services);
         $this->replaceEnvVariables($services);
-        $this->configurePhpUnit();
 
         if ($this->option('devcontainer')) {
             $this->installDevContainer();
@@ -106,7 +105,7 @@ class InstallCommand extends Command
 
         // Replace Selenium with ARM base container on Apple Silicon...
         if (in_array('selenium', $services) && php_uname('m') === 'arm64') {
-            $dockerCompose = str_replace('selenium/standalone-chrome', 'seleniarm/standalone-chromium', $dockerCompose);
+            $stubs = str_replace('selenium/standalone-chrome', 'seleniarm/standalone-chromium', $stubs);
         }
 
         // Remove empty lines...
@@ -147,25 +146,6 @@ class InstallCommand extends Command
         }
 
         file_put_contents($this->laravel->basePath('.env'), $environment);
-    }
-
-    /**
-     * Configure PHPUnit to use the dedicated testing database.
-     *
-     * @return void
-     */
-    protected function configurePhpUnit()
-    {
-        if (! file_exists($path = $this->laravel->basePath('phpunit.xml'))) {
-            $path = $this->laravel->basePath('phpunit.xml.dist');
-        }
-
-        $phpunit = file_get_contents($path);
-
-        $phpunit = preg_replace('/^.*DB_CONNECTION.*\n/m', '', $phpunit);
-        $phpunit = str_replace('<!-- <env name="DB_DATABASE" value=":memory:"/> -->', '<env name="DB_DATABASE" value="testing"/>', $phpunit);
-
-        file_put_contents($this->laravel->basePath('phpunit.xml'), $phpunit);
     }
 
     /**

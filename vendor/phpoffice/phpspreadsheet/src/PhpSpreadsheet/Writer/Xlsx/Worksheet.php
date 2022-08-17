@@ -2,8 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ErrorValue;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\Value;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
@@ -119,9 +117,6 @@ class Worksheet extends WriterPart
 
         // AlternateContent
         $this->writeAlternateContent($objWriter, $worksheet);
-
-        // Table
-        $this->writeTable($objWriter, $worksheet);
 
         // ConditionalFormattingRuleExtensionList
         // (Must be inserted last. Not insert last, an Excel parse error will occur)
@@ -481,10 +476,7 @@ class Worksheet extends WriterPart
         ) {
             foreach ($conditions as $formula) {
                 // Formula
-                if (is_bool($formula)) {
-                    $formula = $formula ? 'TRUE' : 'FALSE';
-                }
-                $objWriter->writeElement('formula', Xlfn::addXlfn("$formula"));
+                $objWriter->writeElement('formula', Xlfn::addXlfn($formula));
             }
         } else {
             if ($conditional->getConditionType() == Conditional::CONDITION_CONTAINSBLANKS) {
@@ -531,7 +523,7 @@ class Worksheet extends WriterPart
                     $objWriter->writeElement('formula', 'AND(MONTH(' . $cellCoordinate . ')=MONTH(EDATE(TODAY(),0+1)),YEAR(' . $cellCoordinate . ')=YEAR(EDATE(TODAY(),0+1)))');
                 }
             } else {
-                $objWriter->writeElement('formula', (string) ($conditional->getConditions()[0]));
+                $objWriter->writeElement('formula', $conditional->getConditions()[0]);
             }
         }
     }
@@ -552,7 +544,7 @@ class Worksheet extends WriterPart
                     $objWriter->writeElement('formula', 'ISERROR(SEARCH("' . $txt . '",' . $cellCoordinate . '))');
                 }
             } else {
-                $objWriter->writeElement('formula', (string) ($conditional->getConditions()[0]));
+                $objWriter->writeElement('formula', $conditional->getConditions()[0]);
             }
         }
     }
@@ -997,25 +989,6 @@ class Worksheet extends WriterPart
     }
 
     /**
-     * Write Table.
-     */
-    private function writeTable(XMLWriter $objWriter, PhpspreadsheetWorksheet $worksheet): void
-    {
-        $tableCount = $worksheet->getTableCollection()->count();
-
-        $objWriter->startElement('tableParts');
-        $objWriter->writeAttribute('count', (string) $tableCount);
-
-        for ($t = 1; $t <= $tableCount; ++$t) {
-            $objWriter->startElement('tablePart');
-            $objWriter->writeAttribute('r:id', 'rId_table_' . $t);
-            $objWriter->endElement();
-        }
-
-        $objWriter->endElement();
-    }
-
-    /**
      * Write PageSetup.
      */
     private function writePageSetup(XMLWriter $objWriter, PhpspreadsheetWorksheet $worksheet): void
@@ -1277,7 +1250,7 @@ class Worksheet extends WriterPart
     {
         $calculatedValue = $this->getParentWriter()->getPreCalculateFormulas() ? $cell->getCalculatedValue() : $cellValue;
         if (is_string($calculatedValue)) {
-            if (ErrorValue::isError($calculatedValue)) {
+            if (\PhpOffice\PhpSpreadsheet\Calculation\Functions::isError($calculatedValue)) {
                 $this->writeCellError($objWriter, 'e', $cellValue, $calculatedValue);
 
                 return;
@@ -1304,7 +1277,7 @@ class Worksheet extends WriterPart
                 $objWriter,
                 $this->getParentWriter()->getOffice2003Compatibility() === false,
                 'v',
-                ($this->getParentWriter()->getPreCalculateFormulas() && !is_array($calculatedValue) && substr($calculatedValue ?? '', 0, 1) !== '#')
+                ($this->getParentWriter()->getPreCalculateFormulas() && !is_array($calculatedValue) && substr($calculatedValue, 0, 1) !== '#')
                     ? StringHelper::formatNumber($calculatedValue) : '0'
             );
         }

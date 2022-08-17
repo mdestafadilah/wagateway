@@ -31,7 +31,14 @@
           <div class="card-header d-flex justify-content-between">
           <h5 class="card-title">Histories</h5>
 
-         
+          <div class="d-flex">
+          
+            <form action="{{route('deleteBlast')}}" method="POST">
+              @method('delete')
+              @csrf
+              <button type="submit" class="btn btn-danger btn-sm">Delete All</button>
+            </form>
+          </div>
              
           </div>
           <div class="card-body">
@@ -39,8 +46,9 @@
                   <thead>
                       <tr>
                           <th>Receiver</th>
+                          <th>Type</th>
+                          <th>Message</th>
                           <th>Status</th>
-                        <th>Last Update</th>
                           {{-- <th class="d-flex justify-content-center">Action</th> --}}
                       </tr>
                   </thead>
@@ -48,25 +56,21 @@
                      @foreach ($histories as $history)
                          
                      <tr>
-                        <td>{{$history->receiver}}</td>
-                        <td>
-                            @php
-                                if($history->status == 'pending')
-                                {
-                                    echo '<span class="badge badge-warning">Pending</span>';
-                                }
-                                elseif($history->status == 'success')
-                                {
-                                    echo '<span class="badge badge-success">Success</span>';
-                                }
-                                elseif($history->status == 'failed')
-                                {
-                                    echo '<span class="badge badge-danger">Failed</span>';
-                                }
-                            @endphp
-                            </td>
-                        <td>{{$history->updated_at}}</td>
-                       
+                         <td>{{$history->receiver}}</td>
+                         <td><span class="badge badge-secondary badge-sm text-warning">{{$history->type}}</span></td>
+                         <td> <textarea name="" id="" cols="30" rows="2" disabled>{{Str::limit($history->message,100)}}</textarea> </td>
+                         <td><span class="badge badge-{{$history->status === 'success' ? 'success' : 'danger'}}">{{$history->status}}</span></td>
+                         {{-- <td>
+                             <div class="d-flex justify-content-center">
+                                 <button class="btn btn-success btn-sm mx-3">Add to Tag</button>
+                                 <form action="{{route('contactDeleteOne',$contact->id)}}" method="POST">
+                                  @method('delete')
+                                  @csrf
+                                     <input type="hidden" name="id" value="{{$contact->id}}">
+                                     <button type="submit" name="delete" class="btn btn-danger btn-sm"><i class="material-icons">delete_outline</i>Delete</button>
+                                  </form>
+                             </div>
+                          </td> --}}
                       </tr>
                       @endforeach
                     

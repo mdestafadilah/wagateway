@@ -1,64 +1,35 @@
-'use strict'
+const { startCon } = require('./server/WaConnection')
+const http = require('http');
+const express = require('express');
+const app = express();
+const server = http.createServer(app);
+const router = express.Router();
+const { Server } = require('socket.io');
+const io = new Server(server);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '50mb', parameterLimit: 1000000 }))
+app.use(router);
+require('./server/Routes')(router)
 
-const fs = require('fs')
-const wa = require('./server/router/model/whatsapp')
-
-require('dotenv').config()
-const lib = require('./server/lib')
-global.log = lib.log
-
-/**
- * EXPRESS FOR ROUTING
- */
-const express = require('express')
-const app = express()
-const http = require('http')
-const server = http.createServer(app)
-
-/**
- * SOCKET.IO
- */
-const {Server} = require('socket.io');
-const io = new Server(server)
-const port = process.env.PORT_NODE
-// const io = require('socket.io')(server, {
-//     cors: {
-//         origin: process.env.ORIGIN
-//     }
-// });
-// middleware
-app.use((req, res, next) => {
-    res.set('Cache-Control', 'no-store')
-    req.io = io
-    // res.set('Cache-Control', 'no-store')
-    next()
-})
-
-
-/**
- * PARSER
- */
-// body parser
-const bodyParser = require('body-parser')
-const { dbQuery } = require('./server/database')
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-// parse application/json
-app.use(bodyParser.json())
-
-app.use(express.static('src/public'))
-app.use(require('./server/router'))
-
-
-// console.log(process.argv)
+// Copyright By Ilman Sunanuddin, M pedia
+// Email : Ilmansunannudin2@gmail.com / admin@m-pedia.my.id
+// Whatsap : 6282298859671
+// ------------------------------------------------------------------
+// Dilarang share atau menjual belikan source code ini tanpa izin ya bos! biar berkah hehe
 
 io.on('connection', (socket) => {
-  socket.on('StartConnection', (data) => {
-        wa.connectToWhatsApp(data,io)
-  })
+    socket.on('StartConnection', async (device) => {
+        startCon(device, socket)
+        return;
+    })
     socket.on('LogoutDevice', (device) => {
-       wa.deleteCredentials(device,io)
+        startCon(device, socket, true)
+        return
     })
 })
-server.listen(port, log.info(`Server run and listening port: ${port}`))
+server.listen(process.env.PORT_NODE, () => {
+    console.log(`Server running on port ${process.env.PORT_NODE}`);
+})
+
+
 

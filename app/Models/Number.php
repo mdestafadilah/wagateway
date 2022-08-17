@@ -13,8 +13,4 @@ class Number extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-
-    public function autoreplies(){
-        return $this->hasMany(Autoreply::class,'device','body');
-    }
 }

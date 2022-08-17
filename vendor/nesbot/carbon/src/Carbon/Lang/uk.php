@@ -193,7 +193,6 @@ return [
             'genitive' => ['неділі', 'понеділка', 'вівторка', 'середи', 'четверга', 'п’ятниці', 'суботи'],
         ];
 
-        $format = $format ?? '';
         $nounCase = preg_match('/(\[(В|в|У|у)\])\s+dddd/u', $format)
             ? 'accusative'
             : (

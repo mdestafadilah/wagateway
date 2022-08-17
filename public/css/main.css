@@ -6407,14 +6407,14 @@ span.flatpickr-weekday {
 }
 
 .app-auth-sign-in .app-auth-background {
-    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png') no-repeat;
+    background: url('../images/backgrounds/sign-in.svg') no-repeat;
     background-size: 60%;
     background-position: center;
 }
 
 
 .app-auth-sign-up .app-auth-background {
-    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png') no-repeat;
+    background: url('../images/backgrounds/sign-up.svg') no-repeat;
     background-size: 60%;
     background-position: center;
 }

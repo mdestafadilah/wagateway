@@ -463,7 +463,7 @@ class Assert
         static::reportInvalidArgument(\sprintf(
             $message ?: 'Expected an instance of any of %2$s. Got: %s',
             static::typeToString($value),
-            \implode(', ', \array_map(array(static::class, 'valueToString'), $classes))
+            \implode(', ', \array_map(array('static', 'valueToString'), $classes))
         ));
     }
 
@@ -485,8 +485,8 @@ class Assert
 
         if (!\is_a($value, $class, \is_string($value))) {
             static::reportInvalidArgument(sprintf(
-                $message ?: 'Expected an instance of this class or to this class among its parents "%2$s". Got: %s',
-                static::valueToString($value),
+                $message ?: 'Expected an instance of this class or to this class among his parents %2$s. Got: %s',
+                static::typeToString($value),
                 $class
             ));
         }
@@ -511,8 +511,8 @@ class Assert
 
         if (\is_a($value, $class, \is_string($value))) {
             static::reportInvalidArgument(sprintf(
-                $message ?: 'Expected an instance of this class or to this class among its parents other than "%2$s". Got: %s',
-                static::valueToString($value),
+                $message ?: 'Expected an instance of this class or to this class among his parents other than %2$s. Got: %s',
+                static::typeToString($value),
                 $class
             ));
         }
@@ -539,9 +539,9 @@ class Assert
         }
 
         static::reportInvalidArgument(sprintf(
-            $message ?: 'Expected an instance of any of this classes or any of those classes among their parents "%2$s". Got: %s',
-            static::valueToString($value),
-            \implode(', ', $classes)
+            $message ?: 'Expected an any of instance of this class or to this class among his parents other than %2$s. Got: %s',
+            static::typeToString($value),
+            \implode(', ', \array_map(array('static', 'valueToString'), $classes))
         ));
     }
 
@@ -975,7 +975,7 @@ class Assert
             static::reportInvalidArgument(\sprintf(
                 $message ?: 'Expected one of: %2$s. Got: %s',
                 static::valueToString($value),
-                \implode(', ', \array_map(array(static::class, 'valueToString'), $values))
+                \implode(', ', \array_map(array('static', 'valueToString'), $values))
             ));
         }
     }
@@ -1822,23 +1822,10 @@ class Assert
      */
     public static function isList($array, $message = '')
     {
-        if (!\is_array($array)) {
+        if (!\is_array($array) || $array !== \array_values($array)) {
             static::reportInvalidArgument(
                 $message ?: 'Expected list - non-associative array.'
             );
-        }
-
-        if ($array === \array_values($array)) {
-            return;
-        }
-
-        $nextKey = -1;
-        foreach ($array as $k => $v) {
-            if ($k !== ++$nextKey) {
-                static::reportInvalidArgument(
-                    $message ?: 'Expected list - non-associative array.'
-                );
-            }
         }
     }
 
@@ -1968,7 +1955,7 @@ class Assert
         if ('nullOr' === \substr($name, 0, 6)) {
             if (null !== $arguments[0]) {
                 $method = \lcfirst(\substr($name, 6));
-                \call_user_func_array(array(static::class, $method), $arguments);
+                \call_user_func_array(array('static', $method), $arguments);
             }
 
             return;
@@ -1983,7 +1970,7 @@ class Assert
             foreach ($arguments[0] as $entry) {
                 $args[0] = $entry;
 
-                \call_user_func_array(array(static::class, $method), $args);
+                \call_user_func_array(array('static', $method), $args);
             }
 
             return;
@@ -2067,7 +2054,6 @@ class Assert
      * @throws InvalidArgumentException
      *
      * @psalm-pure this method is not supposed to perform side-effects
-     * @psalm-return never
      */
     protected static function reportInvalidArgument($message)
     {

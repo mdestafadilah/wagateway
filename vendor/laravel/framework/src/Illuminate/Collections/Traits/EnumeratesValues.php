@@ -16,13 +16,11 @@ use JsonSerializable;
 use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
 use UnexpectedValueException;
-use UnitEnum;
 
 /**
  * @property-read HigherOrderCollectionProxy $average
  * @property-read HigherOrderCollectionProxy $avg
  * @property-read HigherOrderCollectionProxy $contains
- * @property-read HigherOrderCollectionProxy $doesntContain
  * @property-read HigherOrderCollectionProxy $each
  * @property-read HigherOrderCollectionProxy $every
  * @property-read HigherOrderCollectionProxy $filter
@@ -64,7 +62,6 @@ trait EnumeratesValues
         'average',
         'avg',
         'contains',
-        'doesntContain',
         'each',
         'every',
         'filter',
@@ -992,8 +989,6 @@ trait EnumeratesValues
             return (array) $items->jsonSerialize();
         } elseif ($items instanceof Traversable) {
             return iterator_to_array($items);
-        } elseif ($items instanceof UnitEnum) {
-            return [$items];
         }
 
         return (array) $items;

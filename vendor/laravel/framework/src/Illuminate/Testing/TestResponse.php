@@ -1491,17 +1491,11 @@ EOF;
             PHPUnit::fail('The response is not a streamed response.');
         }
 
-        ob_start(function (string $buffer): string {
-            $this->streamedContent .= $buffer;
-
-            return '';
-        });
+        ob_start();
 
         $this->sendContent();
 
-        ob_end_clean();
-
-        return $this->streamedContent;
+        return $this->streamedContent = ob_get_clean();
     }
 
     /**

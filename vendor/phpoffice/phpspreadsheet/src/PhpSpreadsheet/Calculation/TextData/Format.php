@@ -7,7 +7,6 @@ use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception as CalcExp;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
@@ -145,7 +144,7 @@ class Format
             if (Functions::getCompatibilityMode() === Functions::COMPATIBILITY_OPENOFFICE) {
                 $value = (int) $value;
             } else {
-                throw new CalcExp(ExcelError::VALUE());
+                throw new CalcExp(Functions::VALUE());
             }
         }
 
@@ -188,21 +187,21 @@ class Format
 
             if (strpos($value, ':') !== false) {
                 $timeValue = Functions::scalar(DateTimeExcel\TimeValue::fromString($value));
-                if ($timeValue !== ExcelError::VALUE()) {
+                if ($timeValue !== Functions::VALUE()) {
                     Functions::setReturnDateType($dateSetting);
 
                     return $timeValue;
                 }
             }
             $dateValue = Functions::scalar(DateTimeExcel\DateValue::fromString($value));
-            if ($dateValue !== ExcelError::VALUE()) {
+            if ($dateValue !== Functions::VALUE()) {
                 Functions::setReturnDateType($dateSetting);
 
                 return $dateValue;
             }
             Functions::setReturnDateType($dateSetting);
 
-            return ExcelError::VALUE();
+            return Functions::VALUE();
         }
 
         return (float) $value;
@@ -253,11 +252,11 @@ class Format
         if (!is_numeric($value)) {
             $decimalPositions = preg_match_all('/' . preg_quote($decimalSeparator) . '/', $value, $matches, PREG_OFFSET_CAPTURE);
             if ($decimalPositions > 1) {
-                return ExcelError::VALUE();
+                return Functions::VALUE();
             }
             $decimalOffset = array_pop($matches[0])[1];
             if (strpos($value, $groupSeparator, $decimalOffset) !== false) {
-                return ExcelError::VALUE();
+                return Functions::VALUE();
             }
 
             $value = str_replace([$groupSeparator, $decimalSeparator], ['', '.'], $value);
@@ -265,7 +264,7 @@ class Format
             // Handle the special case of trailing % signs
             $percentageString = rtrim($value, '%');
             if (!is_numeric($percentageString)) {
-                return ExcelError::VALUE();
+                return Functions::VALUE();
             }
 
             $percentageAdjustment = strlen($value) - strlen($percentageString);
@@ -275,6 +274,6 @@ class Format
             }
         }
 
-        return is_array($value) ? ExcelError::VALUE() : (float) $value;
+        return is_array($value) ? Functions::VALUE() : (float) $value;
     }
 }

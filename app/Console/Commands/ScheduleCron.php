@@ -44,14 +44,11 @@ class ScheduleCron extends Command
       $numbers = Number::whereStatus('Connected')->get();
     
       $url = env('WA_URL_SERVER').'/backend-initialize';
-      Log::info('Auto connect whatsapp running');
+      Log::info(env('WA_URL_SERVER'));
       foreach ($numbers as $n) {
 
-       $result =  Http::withOptions(['verify' => false])->asForm()->post($url,['token' => $n->body]);
-       Log::info($result);
-
-       // delay 2 seconds
-        sleep(2);
+       $k =  Http::withOptions(['verify' => false])->asForm()->post($url,['sender' => $n->body]);
+       Log::info('Success initialize '. $n->body);
       }
     }
 }

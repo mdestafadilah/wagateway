@@ -4,7 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class ConvertUOM
 {
@@ -539,18 +539,18 @@ class ConvertUOM
         }
 
         if (!is_numeric($value)) {
-            return ExcelError::VALUE();
+            return Functions::VALUE();
         }
 
         try {
             [$fromUOM, $fromCategory, $fromMultiplier] = self::getUOMDetails($fromUOM);
             [$toUOM, $toCategory, $toMultiplier] = self::getUOMDetails($toUOM);
         } catch (Exception $e) {
-            return ExcelError::NA();
+            return Functions::NA();
         }
 
         if ($fromCategory !== $toCategory) {
-            return ExcelError::NA();
+            return Functions::NA();
         }
 
         // @var float $value

@@ -242,7 +242,7 @@ class Native implements Serializable
             }
 
             unset($value);
-        } elseif (is_object($data) && ! $data instanceof static && ! $data instanceof UnitEnum) {
+        } elseif (is_object($data) && ! $data instanceof static) {
             if (isset($storage[$data])) {
                 $data = $storage[$data];
 

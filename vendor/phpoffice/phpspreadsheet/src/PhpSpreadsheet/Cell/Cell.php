@@ -2,8 +2,8 @@
 
 namespace PhpOffice\PhpSpreadsheet\Cell;
 
+use DateTime;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Collection\Cells;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
@@ -239,7 +239,18 @@ class Cell
 
                 break;
             case DataType::TYPE_ISO_DATE:
-                $this->value = SharedDate::convertIsoDate($value);
+                if (!is_string($value)) {
+                    throw new Exception('Non-string supplied for datatype Date');
+                }
+                $date = new DateTime($value);
+                $newValue = SharedDate::PHPToExcel($date);
+                if ($newValue === false) {
+                    throw new Exception("Invalid string $value supplied for datatype Date");
+                }
+                if (preg_match('/^\\d\\d:\\d\\d:\\d\\d/', $value) == 1) {
+                    $newValue = fmod($newValue, 1.0);
+                }
+                $this->value = $newValue;
                 $dataType = DataType::TYPE_NUMERIC;
 
                 break;
@@ -268,7 +279,7 @@ class Cell
      */
     public function getCalculatedValue($resetLog = true)
     {
-        if ($this->dataType === DataType::TYPE_FORMULA) {
+        if ($this->dataType == DataType::TYPE_FORMULA) {
             try {
                 $index = $this->getWorksheet()->getParent()->getActiveSheetIndex();
                 $selected = $this->getWorksheet()->getSelectedCells();
@@ -287,7 +298,7 @@ class Cell
                 if (($ex->getMessage() === 'Unable to access External Workbook') && ($this->calculatedValue !== null)) {
                     return $this->calculatedValue; // Fallback for calculations referencing external files.
                 } elseif (preg_match('/[Uu]ndefined (name|offset: 2|array key 2)/', $ex->getMessage()) === 1) {
-                    return ExcelError::NAME();
+                    return \PhpOffice\PhpSpreadsheet\Calculation\Functions::NAME();
                 }
 
                 throw new \PhpOffice\PhpSpreadsheet\Calculation\Exception(
@@ -367,16 +378,20 @@ class Cell
 
     /**
      * Identify if the cell contains a formula.
+     *
+     * @return bool
      */
-    public function isFormula(): bool
+    public function isFormula()
     {
-        return $this->dataType === DataType::TYPE_FORMULA && $this->getStyle()->getQuotePrefix() === false;
+        return $this->dataType == DataType::TYPE_FORMULA;
     }
 
     /**
      *    Does this cell contain Data validation rules?
+     *
+     * @return bool
      */
-    public function hasDataValidation(): bool
+    public function hasDataValidation()
     {
         if (!isset($this->parent)) {
             throw new Exception('Cannot check for data validation when cell is not bound to a worksheet');

@@ -37,13 +37,13 @@ $(document).ready(function () {
       {
         icon: 'fas fa-upload',
         label: lang['nav-upload'],
-        attrs: {id: 'upload'}
+        attrs: { id: 'upload' }
       },
-      {
-        icon: 'fas fa-folder',
-        label: lang['nav-new'],
-        attrs: {id: 'add-folder'}
-      }
+      // {
+      //   icon: 'fas fa-folder',
+      //   label: lang['nav-new'],
+      //   attrs: {id: 'add-folder'}
+      // }
     ]
   });
 
@@ -64,7 +64,7 @@ $(document).ready(function () {
       $('<a>').addClass('dropdown-item').attr('data-sortby', sort.by)
         .append($('<i>').addClass('fas fa-fw fa-' + sort.icon))
         .append($('<span>').text(sort.label))
-        .click(function() {
+        .click(function () {
           sort_type = sort.by;
           loadItems();
         })
@@ -83,7 +83,7 @@ $(document).ready(function () {
       });
     });
 
-  $(window).on('dragenter', function(){
+  $(window).on('dragenter', function () {
     $('#uploadModal').modal('show');
   });
 
@@ -139,12 +139,12 @@ $(document).on('click', '#upload', function () {
   $('#uploadModal').modal('show');
 });
 
-$(document).on('click', '[data-display]', function() {
+$(document).on('click', '[data-display]', function () {
   show_list = $(this).data('display');
   loadItems();
 });
 
-$(document).on('click', '[data-action]', function() {
+$(document).on('click', '[data-action]', function () {
   window[$(this).data('action')]($(this).data('multiple') ? getSelectedItems() : getOneSelectedElement());
 });
 
@@ -152,7 +152,7 @@ $(document).on('click', '[data-action]', function() {
 // ==  Multiple Selection  ==
 // ==========================
 
-function toggleSelected (e) {
+function toggleSelected(e) {
   if (!multi_selection_enabled) {
     selected = [];
   }
@@ -168,7 +168,7 @@ function toggleSelected (e) {
   updateSelectedStyle();
 }
 
-function clearSelected () {
+function clearSelected() {
   selected = [];
 
   multi_selection_enabled = false;
@@ -268,7 +268,7 @@ function performLfmRequest(url, parameter, type) {
 
   return $.ajax({
     type: 'GET',
-    beforeSend: function(request) {
+    beforeSend: function (request) {
       var token = getUrlParam('token');
       if (token !== null) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);
@@ -420,7 +420,7 @@ function createPagination(paginationSetting) {
 
 function loadItems(page) {
   loading(true);
-  performLfmRequest('jsonitems', {show_list: show_list, sort_type: sort_type, page: page || 1}, 'html')
+  performLfmRequest('jsonitems', { show_list: show_list, sort_type: sort_type, page: page || 1 }, 'html')
     .done(function (data) {
       selected = [];
       var response = JSON.parse(data);
@@ -467,7 +467,7 @@ function loadItems(page) {
       if (hasPaginator) {
         createPagination(response.paginator);
 
-        $('#pagination a').on('click', function(event) {
+        $('#pagination a').on('click', function (event) {
           event.preventDefault();
 
           loadItems($(this).closest('li')[0].getAttribute('data-num'));
@@ -522,7 +522,7 @@ function loading(show_loading) {
 }
 
 function createFolder(folder_name) {
-  performLfmRequest('newfolder', {name: folder_name})
+  performLfmRequest('newfolder', { name: folder_name })
     .done(refreshFoldersAndItems);
 }
 
@@ -548,12 +548,12 @@ function trash(items) {
 }
 
 function crop(item) {
-  performLfmRequest('crop', {img: item.name})
+  performLfmRequest('crop', { img: item.name })
     .done(hideNavAndShowEditor);
 }
 
 function resize(item) {
-  performLfmRequest('resize', {img: item.name})
+  performLfmRequest('resize', { img: item.name })
     .done(hideNavAndShowEditor);
 }
 
@@ -646,7 +646,7 @@ function move(items) {
 function getUrlParam(paramName) {
   var reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
   var match = window.location.search.match(reParam);
-  return ( match && match.length > 1 ) ? match[1] : null;
+  return (match && match.length > 1) ? match[1] : null;
 }
 
 function use(items) {
@@ -655,7 +655,7 @@ function use(items) {
 
     var win = tinyMCEPopup.getWindowArg("window");
     win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = url;
-    if (typeof(win.ImageDialog) != "undefined") {
+    if (typeof (win.ImageDialog) != "undefined") {
       // Update image dimensions
       if (win.ImageDialog.getImageData) {
         win.ImageDialog.getImageData();
@@ -674,15 +674,15 @@ function use(items) {
 
     parent.document.getElementById(getUrlParam('field_name')).value = url;
 
-    if(typeof parent.tinyMCE !== "undefined") {
+    if (typeof parent.tinyMCE !== "undefined") {
       parent.tinyMCE.activeEditor.windowManager.close();
     }
-    if(typeof parent.$.fn.colorbox !== "undefined") {
+    if (typeof parent.$.fn.colorbox !== "undefined") {
       parent.$.fn.colorbox.close();
     }
   }
 
-  function useTinymce5(url){
+  function useTinymce5(url) {
     if (!usingTinymce5()) { return; }
 
     parent.postMessage({
@@ -712,7 +712,7 @@ function use(items) {
     var p = url;
     var w = data['Properties']['Width'];
     var h = data['Properties']['Height'];
-    window.opener.SetUrl(p,w,h);
+    window.opener.SetUrl(p, w, h);
   }
 
   var url = items[0].url;
@@ -763,8 +763,8 @@ function usingTinymce4AndColorbox() {
   return !!getUrlParam('field_name');
 }
 
-function usingTinymce5(){
-    return !!getUrlParam('editor');
+function usingTinymce5() {
+  return !!getUrlParam('editor');
 }
 
 function usingCkeditor3() {

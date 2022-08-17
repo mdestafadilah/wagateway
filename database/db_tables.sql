@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Waktu pembuatan: 27 Jul 2022 pada 06.35
+-- Waktu pembuatan: 13 Apr 2022 pada 21.34
 -- Versi server: 5.7.34
 -- Versi PHP: 7.4.21
 
@@ -32,7 +32,7 @@ CREATE TABLE `autoreplies` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `device` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `keyword` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` enum('text','image','button','template','list') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('text','image','button','template') COLLATE utf8mb4_unicode_ci NOT NULL,
   `reply` json NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -47,32 +47,10 @@ CREATE TABLE `autoreplies` (
 CREATE TABLE `blasts` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `sender` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `campaign_id` bigint(20) UNSIGNED NOT NULL,
   `receiver` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` json NOT NULL,
-  `type` enum('text','button','image','template','list') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('failed','success','pending') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `campaigns`
---
-
-CREATE TABLE `campaigns` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `sender` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tag` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('waiting','executed','failed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'waiting',
-  `message` json NOT NULL,
-  `schedule` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('text','button','image','template') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('failed','success') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -104,21 +82,6 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data untuk tabel `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2014_10_12_000000_create_users_table', 1),
-(2, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(3, '2022_02_15_090711_create_numbers_table', 1),
-(4, '2022_02_18_125542_create_autoreplies_table', 1),
-(5, '2022_02_18_142742_create_tags_table', 1),
-(6, '2022_02_19_142504_create_contacts_table', 1),
-(7, '2022_03_18_202342_create_schedules_table', 1),
-(8, '2022_07_23_163942_create_campaigns_table', 1),
-(9, '2022_07_23_172710_create_blasts_table', 1);
 
 -- --------------------------------------------------------
 
@@ -173,6 +136,7 @@ CREATE TABLE `schedules` (
   `button1` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `button2` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datetime` datetime NOT NULL,
+  `is_executed` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -205,11 +169,6 @@ CREATE TABLE `users` (
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `api_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `chunk_blast` int(11) NOT NULL,
-  `level` enum('admin','user') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
-  `status` enum('active','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
-  `limit_device` int(11) NOT NULL DEFAULT '0',
-  `active_subscription` enum('inactive','active','lifetime','trial') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'inactive',
-  `subscription_expired` datetime DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -230,15 +189,7 @@ ALTER TABLE `autoreplies`
 --
 ALTER TABLE `blasts`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `blasts_user_id_foreign` (`user_id`),
-  ADD KEY `blasts_campaign_id_foreign` (`campaign_id`);
-
---
--- Indeks untuk tabel `campaigns`
---
-ALTER TABLE `campaigns`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `campaigns_user_id_foreign` (`user_id`);
+  ADD KEY `blasts_user_id_foreign` (`user_id`);
 
 --
 -- Indeks untuk tabel `contacts`
@@ -303,22 +254,16 @@ ALTER TABLE `blasts`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `campaigns`
---
-ALTER TABLE `campaigns`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT untuk tabel `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `numbers`
@@ -336,19 +281,19 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT untuk tabel `schedules`
 --
 ALTER TABLE `schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -358,14 +303,7 @@ ALTER TABLE `users`
 -- Ketidakleluasaan untuk tabel `blasts`
 --
 ALTER TABLE `blasts`
-  ADD CONSTRAINT `blasts_campaign_id_foreign` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `blasts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `campaigns`
---
-ALTER TABLE `campaigns`
-  ADD CONSTRAINT `campaigns_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `contacts`

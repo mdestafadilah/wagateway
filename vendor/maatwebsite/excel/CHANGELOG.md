@@ -4,45 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [3.1.40] - 2022-05-02
-
-### Changed
-
-- Adds `WithDefaultStyles` concern to allow configuring the workbook default styles.
-- Adds `WithBackgroundColor` concern to allow configuring the workbook default background color.
-- Expose the ability to set custom response headers when exporting collections via Exportable
-
-## [3.1.39] - 2022-04-23
-
-### Fixed
-
-- Fix PHP8.1 return type for Failure class (#3588)
-
-## [3.1.38] - 2022-03-24
-
-### Changed
-
-- Adds concern `WithGroupedHeadingRow` to allow imported sheets to group the values of columns with the same header in an array
-
-### Fixed
-
-- Fix for `prepareForValidation` callback not being called when using `SkipsEmptyRows`
-
-## [3.1.37] - 2022-02-28
-
-### Fixed
-- Add `@mixin` docblock to all macroable classes to allow for IDE autocompletion of delegate classes
-- Fix issue with `Excel::toArray` not allowing nullable reader types for uploaded files
-
-### Changed
-- Change default Csv Import to auto-detect the delimiter when not explicitly defined
-
-## [3.1.36] - 2022-02-03
-
-### Fixed
 - Fix return type of `FromQuery::query()`
-
-## Changed
 - Support Laravel 9
 - Added a config setting to specify DB connection
 - Added a config setting to specify CSV output encoding
@@ -231,12 +193,7 @@ All notable changes to this project will be documented in this file.
 - Raw() method now also available on Exportable.
 - Fix for breaking changes in PhpSpreadsheet with empty enclosures.
 
-[Unreleased]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.40...HEAD
-[3.1.40]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.39...3.1.40
-[3.1.39]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.38...3.1.39
-[3.1.38]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.37...3.1.38
-[3.1.37]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.36...3.1.37
-[3.1.36]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.35...3.1.36
+[Unreleased]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.35...HEAD
 [3.1.35]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.34...3.1.35
 [3.1.34]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.33...3.1.34
 [3.1.33]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.32...3.1.33

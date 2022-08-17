@@ -272,16 +272,12 @@ class Email extends Message
     }
 
     /**
-     * @param resource|string|null $body
+     * @param resource|string $body
      *
      * @return $this
      */
     public function text($body, string $charset = 'utf-8')
     {
-        if (null !== $body && !\is_string($body) && !\is_resource($body)) {
-            throw new \TypeError(sprintf('The body must be a string, a resource or null (got "%s").', get_debug_type($body)));
-        }
-
         $this->text = $body;
         $this->textCharset = $charset;
 
@@ -308,10 +304,6 @@ class Email extends Message
      */
     public function html($body, string $charset = 'utf-8')
     {
-        if (null !== $body && !\is_string($body) && !\is_resource($body)) {
-            throw new \TypeError(sprintf('The body must be a string, a resource or null (got "%s").', get_debug_type($body)));
-        }
-
         $this->html = $body;
         $this->htmlCharset = $charset;
 
@@ -338,10 +330,6 @@ class Email extends Message
      */
     public function attach($body, string $name = null, string $contentType = null)
     {
-        if (!\is_string($body) && !\is_resource($body)) {
-            throw new \TypeError(sprintf('The body must be a string or a resource (got "%s").', get_debug_type($body)));
-        }
-
         $this->attachments[] = ['body' => $body, 'name' => $name, 'content-type' => $contentType, 'inline' => false];
 
         return $this;
@@ -364,10 +352,6 @@ class Email extends Message
      */
     public function embed($body, string $name = null, string $contentType = null)
     {
-        if (!\is_string($body) && !\is_resource($body)) {
-            throw new \TypeError(sprintf('The body must be a string or a resource (got "%s").', get_debug_type($body)));
-        }
-
         $this->attachments[] = ['body' => $body, 'name' => $name, 'content-type' => $contentType, 'inline' => true];
 
         return $this;
@@ -479,7 +463,7 @@ class Email extends Message
         $names = [];
         $htmlPart = null;
         $html = $this->html;
-        if (null !== $html) {
+        if (null !== $this->html) {
             $htmlPart = new TextPart($html, $this->htmlCharset, 'html');
             $html = $htmlPart->getBody();
             preg_match_all('(<img\s+[^>]*src\s*=\s*(?:([\'"])cid:([^"]+)\\1|cid:([^>\s]+)))i', $html, $names);

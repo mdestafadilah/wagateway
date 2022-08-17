@@ -20,11 +20,6 @@
     </div>
 @endif
                 <div class="row">
-                    {{-- text danger subscription --}}
-                     <h5 class="nav-link text-{{Auth::user()->is_expired_subscription ? 'danger' : 'success'}}  mt-1 hide-sidebar-toggle-button">Subscription : {{Auth::user()->expired_subscription}}</h5>
-                               
-                 
-               
                     <div class="col-xl-6">
                         <div class="card widget widget-stats">
                             <div class="card-body">
@@ -60,9 +55,6 @@
                             </div>
                         </div>
                     </div>
-                       </div>
-                    </div>
-                   
                     {{-- <div class="col-xl-4">
                         <div class="card widget widget-stats">
                             <div class="card-body">
@@ -87,10 +79,7 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex gap-4">
-
-                                    <h5 class="">List Devices </h5><span class="text-warning text-sm">*You have {{$limit_device}} limit devices</span>
-                                </div>
+                                <h5>List Devices</h5>
                                 <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#addDevice"><i class="material-icons">add</i>Add </button>
                                 <table class="table table-striped">
                                     <thead>

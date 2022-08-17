@@ -18,8 +18,7 @@ class Kernel extends ConsoleKernel
     ];
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('schedule:cron')->everyMinute();
-        $schedule->command('subscription:check')->daily();
+        $schedule->command('schedule:cron')->everyFiveMinutes();
         $schedule->command('schedule:blast')->everyMinute();
     }
 

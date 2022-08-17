@@ -11,10 +11,10 @@ use League\CommonMark\Node\Node;
 use League\CommonMark\Node\StringContainerInterface;
 use League\CommonMark\Output\RenderedContent;
 use League\CommonMark\Output\RenderedContentInterface;
-use League\CommonMark\Renderer\DocumentRendererInterface;
+use League\CommonMark\Renderer\MarkdownRendererInterface;
 use League\CommonMark\Util\Xml;
 
-final class XmlRenderer implements DocumentRendererInterface
+final class XmlRenderer implements MarkdownRendererInterface
 {
     private const INDENTATION = '    ';
 

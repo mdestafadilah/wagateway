@@ -80,7 +80,7 @@ class WithoutOverlapping
     /**
      * Set the delay (in seconds) to release the job back to the queue.
      *
-     * @param  \DateTimeInterface|int  $releaseAfter
+     * @param  int  $releaseAfter
      * @return $this
      */
     public function releaseAfter($releaseAfter)

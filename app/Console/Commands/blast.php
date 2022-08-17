@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\BlastController;
-use App\Models\Blast as ModelsBlast;
-use App\Models\Campaign;
 use App\Models\Contact;
 use App\Models\Number;
 use App\Models\Schedule;
@@ -49,65 +47,103 @@ class blast extends Command
         try {
            
            
-            $data = Campaign::where('schedule' ,'<=',date('Y-m-d H:i:s'))->whereStatus('waiting')->with('blasts')->get();
-         Log:info($data);
-      
+            $data = Schedule::where('datetime' ,'<=',date('Y-m-d H:i:s'))->whereIsExecuted(0)->get();
+      Log:info(date('Y-m-d H:i:s'));
             foreach($data as $d){
-              
-                $blasts = $d->blasts;
-                $check = Number::whereBody($d->sender)->first();
-                if($check->status != 'Connected'){
-                    $d->status = 'failed';
-                    $d->save();
-                }
-                $data = [];
-                // foreach destination and push to data
-                foreach ($d->blasts as $blast) {
-                   // if there is {name} in message, replace it with contact name
-                   $contact = Contact::whereNumber($blast->receiver)->first();
-                    // replace {name} to name contact if there is name
-                    if($contact){
-                        $message = str_replace('{name}', $contact->name, $d->message);
-                    }
-                    $data[] = [
-                            'sender' => $blast->sender,
                 
-                            'campaign_id' => $d->id,
-                            'receiver' => $blast->receiver,
-                            'message' => $message,
-                            'type' => $d->type,
-                            'status' => 'pending',
-                            'created_at' => now(),
-                            'updated_at' => now()
-                        ];
-                }
-
-                $k = new BlastController();
-               
-                try {
-                    $result = $k->sendBlast($data, 2,$d);
-                    Log::info(json_decode($result)->status);
-                   
-                    if (json_decode($result)->status) {
-                        $d->status = 'executed';
-                        $d->save();
-                    } else {
-                        $d->status = 'failed';
-                        $d->save();
-                        // set error all blast with this campaign
-                        $blastss = ModelsBlast::where('campaign_id', $d->id)->update(['status' => 'failed']);
-                    }
-        
-                } catch (\Throwable $th) {
-                    $d->status = 'failed';
-                    $d->save();
-                    // set error all blast with this campaign
-                    $blastss = ModelsBlast::where('campaign_id', $d->id)->update(['status' => 'failed']);
-                 
-                }
+             $cek = Number::whereBody($d->sender)->first();
+             $user = User::find($cek->user_id);
+             $dN = [  
              
+                 'sender' => $d->sender,
+                 'api_key' => $user->api_key,
+                 'delay' => 5
+                ];
+             if($cek->status !== 'Connected'){
+                 return 0;
+             }
+     
+     $numAndMsg = [];
+             if(strpos($d->text,'{name}')){
+                 foreach (json_decode($d->numbers) as $ds) {
+                     
+                     $name = Contact::whereNumber($ds)->first('name')->name;
+                    $numAndMsg[] = [
+                        'number' => $ds,
+                        'msg' => str_replace('{name}',$name,$d->text)
+                    ];
+                 }
+         } else {
+             Log::info($d);
+             foreach (json_decode($d->numbers) as $ds) {
+                
+                $numAndMsg[] = [
+                    'number' => $ds,
+                    'msg' => $d->text
+                ];
+             }
+         }
+     
+         switch ($d->type) {
+             case 'text':
+                $nm = [
+                     'type' => 'text',
+                     'data' => $numAndMsg
+                ];
+                $data = array_merge($dN,$nm);
+               
+                break;
+             case 'image' :
+                 $nm = [
+                     'type' => 'image',
+                     'data' => $numAndMsg
+                 ];
+                 $nm['data'] = [
+                     'image' => $d->media,
+                     'data' => $numAndMsg
+                  ];
+                $data = array_merge($dN,$nm);
+                 break;
+             case 'button' :
+                 $nm = [
+                     'type' => 'button',
+                     'data' => $numAndMsg
+                 ];
+                 $nm['data'] = [
+                     'footer' => $d->footer,
+                     'button1' => $d->button1,
+                     'button2' => $d->button2,
+                     'data' => $numAndMsg
+                  ];
+                  $data = array_merge($dN,$nm);
               
+     
+                 break;
+             case 'template' :
+     
+                 $nm = [
+                     'type' => 'template',
+                     'data' => $numAndMsg
+                 ];
+                 $nm['data'] = [
+                     'footer' => $d->footer,
+                     'template1' => $d->button1,
+                     'template2' => $d->button2,
+                     'data' => $numAndMsg
+                  ];
+                  $data = array_merge($dN,$nm);
+                 break;
+             default:
+                 # code...
+                 break;
+     
+     
+         }
 
+         $k = new BlastController();
+         $d->is_executed = true;
+         $d->save();
+         $send = $k->sendBlast($data);
 
          }
          

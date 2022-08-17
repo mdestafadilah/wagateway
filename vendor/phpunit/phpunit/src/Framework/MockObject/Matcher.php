@@ -16,7 +16,6 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
 use PHPUnit\Framework\MockObject\Rule\AnyParameters;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
-use PHPUnit\Framework\MockObject\Rule\InvokedAtMostCount;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\MockObject\Rule\MethodName;
 use PHPUnit\Framework\MockObject\Rule\ParametersRule;
@@ -226,11 +225,10 @@ final class Matcher
                 $this->parametersRule = new AnyParameters;
             }
 
-            $invocationIsAny    = $this->invocationRule instanceof AnyInvokedCount;
-            $invocationIsNever  = $this->invocationRule instanceof InvokedCount && $this->invocationRule->isNever();
-            $invocationIsAtMost = $this->invocationRule instanceof InvokedAtMostCount;
+            $invocationIsAny   = $this->invocationRule instanceof AnyInvokedCount;
+            $invocationIsNever = $this->invocationRule instanceof InvokedCount && $this->invocationRule->isNever();
 
-            if (!$invocationIsAny && !$invocationIsNever && !$invocationIsAtMost) {
+            if (!$invocationIsAny && !$invocationIsNever) {
                 $this->parametersRule->verify();
             }
         } catch (ExpectationFailedException $e) {

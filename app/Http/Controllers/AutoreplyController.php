@@ -5,35 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Autoreply;
-use App\Models\Number;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
+use PhpParser\Node\Stmt\Break_;
 
 class AutoreplyController extends Controller
 {
 
    
-    public function index(Request $request){
-       
+    public function index(){
+        
         return view('pages.autoreply',[
-            'autoreplies' => Autoreply::where('user_id',Auth::id())->whereDevice(session()->get('selectedDevice'))->latest()->paginate(15),
-            'numbers' => $request->user()->numbers()->get(),  
+            'numbers' => Auth::user()->numbers()->get(),
+            'autoreplies' => Auth::user()->autoreplies()->orderBy('id','DESC')->get()
         ]);
     }
-
 
     
 
     public function store(Request $request){
         $type = $request->type;
-      
-       $cek = Autoreply::whereDevice($request->device)->whereKeyword($request->keyword)->first();
-       if($cek){
-     
-        throw ValidationException::withMessages([
-            'keyword' => ['Keyword already exists in same number'],
+        $request->validate([
+            'keyword' => ['required','unique:autoreplies']
         ]);
-       }
-
 
 
 
@@ -61,90 +55,53 @@ class AutoreplyController extends Controller
                 ];
                 break;
             case 'button':
-                $request->validate([
-                  
-                    'button1' => 'required',
-                ]);
-                if($request->image){
-                    $arr = explode('.',$request->image);
-                    $ext = end($arr);
-                    $allowext = ['jpg','png','jpeg'];
-                    if(!in_array($ext,$allowext)){
-                        return redirect(route('autoreply'))->with('alert',[
-                            'type' => 'danger',
-                            'msg' => 'Only extension jpg,png and jpeg allowed!'
-                        ]);
-                    }
-                }
                 $buttons = [
                     ["buttonId" => "id1" , "buttonText" => ["displayText" => $request->button1], "type" => 1], 
+                    ["buttonId" => "id2" , "buttonText" => ["displayText" => $request->button2], "type" => 1] 
                 ];
-                 // add if exist button2
-                if($request->button2){
-                    $buttons[] = ["buttonId" => "id2" , "buttonText" => ["displayText" => $request->button2], "type" => 1];
-                }
-                // add if exist button3
-                if($request->button3){
-                    $buttons[] = ["buttonId" => "id3" , "buttonText" => ["displayText" => $request->button3], "type" => 1];
-                }
                 $buttonMessage = [
                     "text" => $request->message,
-                    "footer" => $request->footer ?? '',
+                    "footer" => $request->footer,
                     "buttons" => $buttons,
                     "headerType" => 1
                 ];
-                //add image to buttonMessage if exists
-                if($request->image){
-                    unset($buttonMessage['text']);
-                    $buttonMessage['caption'] = $request->message;
-                    $buttonMessage['image'] = ["url" => $request->image];
-                    $buttonMessage['headerType'] = 4;
-                   
-                }
                 $reply = $buttonMessage;
                 break;
             case 'template':
-                // if(!strpos($request->template1,'|') || !strpos($request->template2,'|')){
-                //     return redirect(route('autoreply'))->with('alert',[
-                //         'type' => 'danger',
-                //         'msg' => 'The Templates are not valid!'
-                //     ]);
-                // } 
-                $request->validate([
-                    'template1' => 'required',
-                   
-                ]);
+                if(!strpos($request->template1,'|') || !strpos($request->template2,'|')){
+                    return redirect(route('autoreply'))->with('alert',[
+                        'type' => 'danger',
+                        'msg' => 'The Templates are not valid!'
+                    ]);
+                } 
                
                 try {
-                   
-                    $templateButtons = [];
-                       $template1 = $this->makeTemplateButton($request->template1,1);
-                          $templateButtons[] = $template1;
-                       // if exist template2
-                          if($request->template2){
-                            $template2 = $this->makeTemplateButton($request->template2,2);
-                            $templateButtons[] = $template2;
-                            }
-                          // if exist template3
-                            if($request->template3){
-                                $template3 = $this->makeTemplateButton($request->template3,3);
-                                $templateButtons[] = $template3;
-                                }
-
-
+                    $allowType = ['callButton','urlButton'];
+                    $template1 = $request->template1;
+                    $type1 = explode('|',$template1)[0].'Button';
+                    $text1 = explode('|',$template1)[1];
+                    $urlOrNumber1 = explode('|',$template1)[2];
+                    $template2 = $request->template2;
+                    $type2 = explode('|',$template2)[0].'Button';
+                    $text2 = explode('|',$template2)[1];
+                    if(!in_array($type1,$allowType) || !in_array($type2,$allowType)){
+                        return redirect(route('autoreply'))->with('alert',[
+                            'type' => 'danger',
+                            'msg' => 'The Templates are not valid!'
+                        ]);
+                    }
+                        $urlOrNumber2 = explode('|',$template2)[2];
+                        $typePurpose1 = explode('|',$template1)[0] === 'url' ? 'url' : 'phoneNumber';
+                        $typePurpose2 = explode('|',$template2)[0] === 'url' ? 'url' : 'phoneNumber';
+                        $templateButtons = [
+                            ["index" => 1, $type1 => ["displayText" => $text1,$typePurpose1 => $urlOrNumber1]],
+                            ["index" => 2, $type2 => ["displayText" => $text2,$typePurpose2 => $urlOrNumber2]],
+                        ];
                         $templateMessage = [
                             "text" => $request->message,
-                            "footer" => $request->footer ?? '',
+                            "footer" => $request->footer,
                             "templateButtons" => $templateButtons
                         ];
-                        //add image to templateMessage if exists
-                        if($request->image){
-                            unset($templateMessage['text']);
-                            $templateMessage['caption'] = $request->message;
-                            $templateMessage['image'] = ["url" => $request->image];
-                          
-                           
-                        }
                         $reply = $templateMessage;
                     
                    
@@ -152,35 +109,6 @@ class AutoreplyController extends Controller
                     echo 'There is error, Please contact 6282298859671';
                 }
               
-                break;
-                case 'list':
-                  $request->validate([
-                    'list' => 'required'
-                ]);
-                $section  = [
-                    "title" => $request->title,
-                ];
-                $i = 1;
-                foreach($request->list as $menu ){
-                   $i++;
-                   $section['rows'][] = [
-                    'title' => $menu,
-                    'rowId' => 'id'.$i,
-                    'description' => '',
-                   ];
-                }
-
-                $listMessage = [
-                    "text" => $request->message,
-                    "footer" => $request->footer ?? '',
-                    'title' => $request->name,
-                    'buttonText' => $request->button,
-                    "sections" => [$section]
-                ];
-
-                $reply = $listMessage;
-                
-
                 break;
             default:
                 # code...
@@ -225,27 +153,23 @@ class AutoreplyController extends Controller
                         ])->render();
                     break;
                 case 'button':
-                    // if exists property image in $dataAutoreply->reply
-                  
                     return  view('ajax.autoreply.buttonshow',[
                         'keyword'=>$dataAutoReply->keyword,
-                        'message'=> json_decode($dataAutoReply->reply)->text ?? json_decode($dataAutoReply->reply)->caption,
+                        'message'=> json_decode($dataAutoReply->reply)->text,
                         'footer' => json_decode($dataAutoReply->reply)->footer,
-                        'buttons'=> json_decode($dataAutoReply->reply)->buttons, 
-                        'image'=> json_decode($dataAutoReply->reply)->image->url ?? null,
+                        'buttons'=> json_decode($dataAutoReply->reply)->buttons,
                         ])->render();
                     break;
                 case 'template':
                   
-              $templates = [];
-              // if exists template 1
-
+              
                     return  view('ajax.autoreply.templateshow',[
                         'keyword'=>$dataAutoReply->keyword,
-                        'message'=> json_decode($dataAutoReply->reply)->text ?? json_decode($dataAutoReply->reply)->caption,
+                        'message'=> json_decode($dataAutoReply->reply)->text,
                         'footer' => json_decode($dataAutoReply->reply)->footer,
-                        'templates' => json_decode($dataAutoReply->reply)->templateButtons,
-                        'image' => json_decode($dataAutoReply->reply)->image->url ?? null,
+                        'template1' => json_decode($dataAutoReply->reply)->templateButtons[0],
+                        'template2' => json_decode($dataAutoReply->reply)->templateButtons[1]
+                        
                         ])->render();
                     break;
                 default:
@@ -270,9 +194,6 @@ class AutoreplyController extends Controller
                 case 'template' :
                     return view('ajax.autoreply.formtemplate')->render();
                     break;
-                case 'list':
-                    return view('ajax.autoreply.formlist')->render();
-                    break;
                 default:
                     # code...
                     break;
@@ -291,30 +212,11 @@ class AutoreplyController extends Controller
         
     }
     public function destroyAll(Request $request){
-        Autoreply::whereUserId(Auth::user()->id)->whereDevice(session()->get('selectedDevice'))->delete();
+        Autoreply::whereUserId(Auth::user()->id)->delete();
         return redirect(route('autoreply'))->with('alert',[
             'type' => 'success',
             'msg' => 'Deleted'
         ]);
-    
-    }
-
-
-    public function makeTemplateButton($templateButton,$no){
-        $allowType = ['callButton', 'urlButton'];
-        $template = $templateButton;
-        $type = explode('|', $template)[0] . 'Button';
-        $text = explode('|', $template)[1];
-        $urlOrNumber = explode('|', $template)[2];
-      
-        if (!in_array($type, $allowType)) {
-            return redirect(route('autoreply'))->with('alert', [
-                'type' => 'danger',
-                'msg' => 'The Templates are not valid!'
-            ]);
-        }
-      
-        $typePurpose = explode('|', $template)[0] === 'url' ? 'url' : 'phoneNumber';
-           return ["index" => $no, $type => ["displayText" => $text, $typePurpose => $urlOrNumber]];             
+        
     }
 }

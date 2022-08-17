@@ -19,16 +19,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('checkApiKey')->group(function () {
-  
-    Route::post('/send-message', [ApiController::class,'messageText']);
-    Route::post('/send-media', [ApiController::class,'messageMedia']);
-    Route::post('/send-button', [ApiController::class,'messageButton']);
-    Route::post('/send-template', [ApiController::class,'messageTemplate']);
-    Route::post('/send-list', [ApiController::class,'messageList']);
-    
-});
-Route::post('/generate-qr', [ApiController::class,'generateQr']);
+Route::post('/send-message', [ApiController::class,'messageText']);
+Route::post('/send-image', [ApiController::class,'messageImage']);
+Route::post('/send-button', [ApiController::class,'messageButton']);
+Route::post('/send-template', [ApiController::class,'messageTemplate']);
+Route::post('/send-document', [ApiController::class,'messageDocument']);
 
 
 

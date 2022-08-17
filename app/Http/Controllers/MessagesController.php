@@ -10,9 +10,9 @@ use GuzzleHttp\Client;
 class MessagesController extends Controller
 {
     
-    public function index(Request $request){
+    public function index(){
         return view('pages.messagetest',[
-            'numbers' => $request->user()->numbers()->latest()->paginate(10),
+            'numbers' => Auth::user()->numbers()->get()
         ]);
        
     }
@@ -20,206 +20,150 @@ class MessagesController extends Controller
 
     public function textMessageTest(Request $request){
         $data = [
-            'type' => 'text',
-            'token' => $request->sender,
+             'type' => 'text',
+            'sender' => $request->sender,
             'number' => $request->number,
-            'text' => $request->message
+            'message' => $request->message
         ];
-        $number = Number::whereBody($request->sender)->first();
-        if($number->status == 'Disconnect'){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'Sender is disconnected']);
-        }
 
-        $sendMessage = json_decode($this->postMsg($data,'backend-send-text'));
-        if(!$sendMessage->status){
-           return redirect()->back()->with('alert',['type' => 'danger','msg' => $sendMessage->msg ?? $sendMessage->message]);
+       $da = Number::whereBody($request->sender)->first();
+        if($da->status !== 'Connected'){
+            return back()->with('alert',[
+                'type' => 'danger',
+                'msg' => 'Your sender is not connected!'
+            ]);
         }
-        $number->messages_sent += 1;
-        $number->save();
-        return redirect()->back()->with('alert',['type' => 'success','msg' => 'Message sent, '. json_encode($sendMessage->data)]);
-    }
-
-
-    public function imageMessageTest(Request $request){
-        $url = $request->url;
-        $fileName = pathinfo($url, PATHINFO_FILENAME);
-        $data = [
-            'type' => $request->type,
-            'token' => $request->sender,
-            'url' => $request->url,
-            'number' => $request->number,
-            'caption' => $request->message,
-            'fileName' => $fileName,
-            'type' => $request->type
-        ];
-        $number = Number::whereBody($request->sender)->first();
-        if ($number->status == 'Disconnect') {
-            return redirect()->back()->with('alert', ['type' => 'danger', 'msg' => 'Sender is disconnected']);
+        try {
+            $response = $this->postMsg($data,'backend-message');
+        $res = json_decode($response);
+        
+        $alert = $res->status ? 'success' : 'danger';
+       $msg = $res->msg;
+        } catch (\Throwable $th) {
+            $alert = 'danger';
+            $msg = 'There is trouble in your node server';
         }
-        $sendMessage = json_decode($this->postMsg($data,'backend-send-media'));
-        if (!$sendMessage->status) {
-            return redirect()->back()->with('alert', ['type' => 'danger', 'msg' => $sendMessage->msg ?? $sendMessage->message]);
-        }
-        $number->messages_sent += 1;
-        $number->save();
-        return redirect()->back()->with('alert', ['type' => 'success', 'msg' => 'Message sent, ' . json_encode($sendMessage->data)]);
-    
        
-
+       return back()->with('alert',[
+           'type' => $alert,
+           'msg' => $msg
+       ]);
+    }
+    public function imageMessageTest(Request $request){
+        $data = [
+            'type' => 'image',
+            'sender' => $request->sender,
+            'url' => $request->image,
+            'number' => $request->number,
+            'message' => $request->message
+        ];
+        $da = Number::whereBody($request->sender)->first();
+        if($da->status !== 'Connected'){
+            return back()->with('alert',[
+                'type' => 'danger',
+                'msg' => 'Your sender is not connected!'
+            ]);
+        }
+        $arr = explode('.',$request->image);
+        $ext = end($arr);
+        $allowed = ['jpg','jpeg','png'];
+       
+        if(!in_array($ext,$allowed)){
+            return back()->with('alert',[
+                'type' => 'danger',
+                'msg' => 'Invalid Url, allowerd JPG,PNG,JPEG'
+            ]);
+        }
+try {
+    $response = $this->postMsg($data,'backend-media');
+    $res = json_decode($response);
+   $alert = $res->status ? 'success' : 'danger';
+   $msg = $res->msg;
+} catch (\Throwable $th) {
+   $alert = 'danger';
+   $msg = 'There is error in your node server!';
+}
+        $response = $this->postMsg($data,'backend-media');
+        $res = json_decode($response);
+       $alert = $res->status ? 'success' : 'danger';
+       return back()->with('alert',[
+           'type' => $alert,
+           'msg' => $msg
+       ]);
     }
     public function buttonMessageTest(Request $request){
-        
-        if(!$request->has('button')){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'No buttons selected']);
-        }
-        $buttons = [
-          
-        ];
-        if(count($request->button) > 0){
-            for($i = 1; $i <= count($request->button); $i++){
-                $buttons[] = ['displayText' => $request->button[$i]];
-            }
-        }
-
-        
         $data = [
-            'token' => $request->sender,
+            'type' => 'button',
+            'sender' => $request->sender,
             'number' => $request->number,
-            'button' => json_encode($buttons),
             'message' => $request->message,
-            'footer' => $request->footer ?? '',
-            'image' => $request->url ?? '',
+            'footer' => $request->footer,
+            'button1' => $request->button1,
+            'button2' => $request->button2
         ];
-       
-        $number = Number::whereBody($request->sender)->first();
-        if($number->status == 'Disconnect'){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'Sender is disconnected']);
+        $da = Number::whereBody($request->sender)->first();
+        if($da->status !== 'Connected'){
+            return back()->with('alert',[
+                'type' => 'danger',
+                'msg' => 'Your sender is not connected!'
+            ]);
         }
-        $sendMessage = json_decode($this->postMsg($data,'backend-send-button'));
-        if (!$sendMessage->status) {
-            return redirect()->back()->with('alert', ['type' => 'danger', 'msg' => $sendMessage->msg ?? $sendMessage->message]);
+        try {
+            $response = $this->postMsg($data,'backend-button');
+        $res = json_decode($response);
+       $alert = $res->status ? 'success' : 'danger';
+       $msg = $res->msg;
+        } catch (\Throwable $th) {
+            $alert = 'danger';
+            $msg = 'There is error in your node server!';
         }
-        $number->messages_sent += 1;
-        $number->save();
-        return redirect()->back()->with('alert', ['type' => 'success', 'msg' => 'Message sent, ' . json_encode($sendMessage->data)]);
-    
        
+       return back()->with('alert',[
+           'type' => $alert,
+           'msg' => $msg
+       ]);
     }
     public function templateMessageTest(Request $request){
-      if(!$request->has('template')){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'No template selected']);
-        }
-        
-        $templates = [];
-            $ii = 0;
-            foreach($request->template as $template){
-                $ii++;
-             $allowType = ['callButton', 'urlButton','idButton'];
-             $type = explode('|', $template)[0] . 'Button';
-             $text = explode('|', $template)[1];
-             $urlOrNumber = explode('|', $template)[2];
-
-             if (!in_array($type, $allowType)) {
-                return back()->with('alert', [
-                    'type' => 'danger',
-                    'msg' => 'The Templates are not valid!'
-                ]);
-             }
-
-            $ty = explode('|', $template)[0];
-            $type = $ty ==  'id' ? 'quickReplyButton' : $type;
-            if($ty == 'url') {
-                $typePurpose = 'url';
-            } else if($ty == 'call'){
-                $typePurpose = 'phoneNumber';
-            } else {
-                $typePurpose = 'id';
-            }
-            $templates[] = ["index" => $ii, $type => ["displayText" => $text, $typePurpose => $urlOrNumber]];
-        }
-            
-        
         $data = [
-            'token' => $request->sender,
+            'type' => 'template',
+            'sender' => $request->sender,
             'number' => $request->number,
-            'button' => json_encode($templates),
-            'text' => $request->message,
-            'footer' => $request->footer ?? '',
-            'image' => $request->url ?? '',
+            'message' => $request->message,
+            'footer' => $request->footer,
+            'template1' => $request->template1,
+            'template2' => $request->template2
         ];
-       
 
-        $number = Number::whereBody($request->sender)->first();
-        if($number->status == 'Disconnect'){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'Sender is disconnected']);
+        $da = Number::whereBody($request->sender)->first();
+        if($da->status !== 'Connected'){
+            return back()->with('alert',[
+                'type' => 'danger',
+                'msg' => 'Your sender is not connected!'
+            ]);
         }
-        $sendMessage = json_decode($this->postMsg($data,'backend-send-template'));
-        if (!$sendMessage->status) {
-            return redirect()->back()->with('alert', ['type' => 'danger', 'msg' => $sendMessage->msg ?? $sendMessage->message]);
+        try {
+            //code...
+            $response = $this->postMsg($data,'backend-template');
+            $res = json_decode($response);
+           $alert = $res->status ? 'success' : 'danger';
+           $msg = $res->msg;
+        } catch (\Throwable $th) {
+            $alert = 'danger';
+            $msg = 'There is trouble in your node server!';
         }
-        $number->messages_sent += 1;
-        $number->save();
-        return redirect()->back()->with('alert', ['type' => 'success', 'msg' => 'Message sent, ' . json_encode($sendMessage->data)]);
+       return back()->with('alert',[
+           'type' => $alert,
+           'msg' => $msg
+       ]);
     }
 
 
-    public function listMessageTest(Request $request){
-       if(!$request->has('list')){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'No list selected']);
-        }
-
-        $section['title'] = $request->title;
-      
-        $i = 0;
-        foreach ($request->list as $menu) {
-            $i++;
-            $section['rows'][] = [
-                'title' => $menu,
-                'rowId' => 'id' . $i,
-                'description' => '',
-            ];
-        }
-       
-        $data = [
-            'token' => $request->sender,
-            'number' => $request->number,
-            'list' => json_encode($section),
-            'text' => $request->message,
-            'footer' => $request->footer ?? '',
-            'title' => $request->title,
-            'buttonText' => $request->buttontext,
-        ];
-     
-        $number = Number::whereBody($request->sender)->first();
-        if($number->status == 'Disconnect'){
-            return redirect()->back()->with('alert',['type' => 'danger','msg' => 'Sender is disconnected']);
-        }
-        $sendMessage = json_decode($this->postMsg($data,'backend-send-list'));
-       
-        if (!$sendMessage->status) {
-            return redirect()->back()->with('alert', ['type' => 'danger', 'msg' => $sendMessage->msg ?? $sendMessage->message]);
-        }
-        $number->messages_sent += 1;
-        $number->save();
-        return redirect()->back()->with('alert', ['type' => 'success', 'msg' => 'Message sent, ' . json_encode($sendMessage->data)]);
-       
-
-
-       
-       
-    }
-    
-
-
-
-   
 
 
     public function postMsg($data,$url){
         try {
            
            $post = Http::withOptions(['verify' => false])->asForm()->post(env('WA_URL_SERVER').'/'.$url,$data);
-              return $post->body();
            if(json_decode($post)->status === true){
               $c = Number::whereBody($data['sender'])->first();
               $c->messages_sent += 1;
@@ -227,6 +171,8 @@ class MessagesController extends Controller
            }
            return $post;
         } catch (\Throwable $th) {
+            var_dump($th);
+            die;
            return json_encode(['status' => false,'msg' => 'Make sure your server Node already running!']);
         }
     }

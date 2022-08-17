@@ -60,6 +60,8 @@ trait Units
             case 'millisecond':
                 return $this->addRealUnit('microsecond', $value * static::MICROSECONDS_PER_MILLISECOND);
 
+                break;
+
             // @call addRealUnit
             case 'second':
                 break;
@@ -165,7 +167,7 @@ trait Units
             'weekday',
         ];
 
-        return \in_array($unit, $modifiableUnits, true) || \in_array($unit, static::$units, true);
+        return \in_array($unit, $modifiableUnits) || \in_array($unit, static::$units);
     }
 
     /**
@@ -262,7 +264,7 @@ trait Units
                     /** @var static $date */
                     $date = $date->addDays($sign);
 
-                    while (\in_array($date->dayOfWeek, $weekendDays, true)) {
+                    while (\in_array($date->dayOfWeek, $weekendDays)) {
                         $date = $date->addDays($sign);
                     }
                 }
@@ -272,14 +274,14 @@ trait Units
             }
 
             $timeString = $date->toTimeString();
-        } elseif ($canOverflow = (\in_array($unit, [
+        } elseif ($canOverflow = \in_array($unit, [
                 'month',
                 'year',
             ]) && ($overflow === false || (
                 $overflow === null &&
                 ($ucUnit = ucfirst($unit).'s') &&
                 !($this->{'local'.$ucUnit.'Overflow'} ?? static::{'shouldOverflow'.$ucUnit}())
-            )))) {
+            ))) {
             $day = $date->day;
         }
 

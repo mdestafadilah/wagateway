@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Shared\Trend\Trend;
 
 class Trends
@@ -47,9 +46,9 @@ class Trends
         $xValueCount = count($xValues);
 
         if (($yValueCount === 0) || ($yValueCount !== $xValueCount)) {
-            throw new Exception(ExcelError::NA());
+            throw new Exception(Functions::NA());
         } elseif ($yValueCount === 1) {
-            throw new Exception(ExcelError::DIV0());
+            throw new Exception(Functions::DIV0());
         }
     }
 
@@ -66,7 +65,7 @@ class Trends
     public static function CORREL($yValues, $xValues = null)
     {
         if (($xValues === null) || (!is_array($yValues)) || (!is_array($xValues))) {
-            return ExcelError::VALUE();
+            return Functions::VALUE();
         }
 
         try {
@@ -233,7 +232,7 @@ class Trends
                 ],
                 [
                     $bestFitLinear->getSlopeSE(),
-                    ($const === false) ? ExcelError::NA() : $bestFitLinear->getIntersectSE(),
+                    ($const === false) ? Functions::NA() : $bestFitLinear->getIntersectSE(),
                 ],
                 [
                     $bestFitLinear->getGoodnessOfFit(),
@@ -286,7 +285,7 @@ class Trends
 
         foreach ($yValues as $value) {
             if ($value < 0.0) {
-                return ExcelError::NAN();
+                return Functions::NAN();
             }
         }
 
@@ -300,7 +299,7 @@ class Trends
                 ],
                 [
                     $bestFitExponential->getSlopeSE(),
-                    ($const === false) ? ExcelError::NA() : $bestFitExponential->getIntersectSE(),
+                    ($const === false) ? Functions::NA() : $bestFitExponential->getIntersectSE(),
                 ],
                 [
                     $bestFitExponential->getGoodnessOfFit(),

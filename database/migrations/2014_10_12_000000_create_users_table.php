@@ -20,12 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('api_key');
-            $table->integer('chunk_blast');
-            $table->enum('level', ['admin', 'user'])->default('user');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->integer('limit_device')->default(0);
-            $table->enum('active_subscription', ['inactive', 'active','lifetime','trial'])->default('inactive');
-            $table->dateTime('subscription_expired')->nullable();
+           $table->integer('chunk_blast');
             $table->rememberToken();
             $table->timestamps();
         });

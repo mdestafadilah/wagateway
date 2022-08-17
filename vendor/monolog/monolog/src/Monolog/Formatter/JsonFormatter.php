@@ -39,12 +39,11 @@ class JsonFormatter extends NormalizerFormatter
     /**
      * @param self::BATCH_MODE_* $batchMode
      */
-    public function __construct(int $batchMode = self::BATCH_MODE_JSON, bool $appendNewline = true, bool $ignoreEmptyContextAndExtra = false, bool $includeStacktraces = false)
+    public function __construct(int $batchMode = self::BATCH_MODE_JSON, bool $appendNewline = true, bool $ignoreEmptyContextAndExtra = false)
     {
         $this->batchMode = $batchMode;
         $this->appendNewline = $appendNewline;
         $this->ignoreEmptyContextAndExtra = $ignoreEmptyContextAndExtra;
-        $this->includeStacktraces = $includeStacktraces;
 
         parent::__construct();
     }
@@ -110,13 +109,11 @@ class JsonFormatter extends NormalizerFormatter
     }
 
     /**
-     * @return self
+     * @return void
      */
-    public function includeStacktraces(bool $include = true): self
+    public function includeStacktraces(bool $include = true)
     {
         $this->includeStacktraces = $include;
-
-        return $this;
     }
 
     /**

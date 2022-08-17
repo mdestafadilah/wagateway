@@ -3,7 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
+use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
 class ConvertBinary extends ConvertBase
 {
@@ -155,7 +155,7 @@ class ConvertBinary extends ConvertBase
     protected static function validateBinary(string $value): string
     {
         if ((strlen($value) > preg_match_all('/[01]/', $value)) || (strlen($value) > 10)) {
-            throw new Exception(ExcelError::NAN());
+            throw new Exception(Functions::NAN());
         }
 
         return $value;

@@ -13,7 +13,7 @@ Dilarang share atau menjual belikan source code ini tanpa izin ya bos! biar berk
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="MPWA MD V3.5.0 ,Whatsapp gateway Multi device Beta version">
+    <meta name="description" content="MPWA MD V4.3.0 ,Whatsapp gateway Multi device Beta version">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="keywords" content="waapi,wa gateway, whatsapp blast, wamp, mpwa, m pedia wa gateway, wa gateway m pedia, ">
     <meta name="author" content="Ilman Sunanuddin , M pedia">
@@ -35,7 +35,6 @@ Dilarang share atau menjual belikan source code ini tanpa izin ya bos! biar berk
 </head>
 
 <body>
- 
 <x-sidebar></x-sidebar>
 {{ $slot }}
 

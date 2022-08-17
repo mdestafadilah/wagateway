@@ -23,9 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface as ContractsTranslatorInterface;
 
-if (interface_exists('Symfony\\Contracts\\Translation\\TranslatorInterface') &&
-    !interface_exists('Symfony\\Component\\Translation\\TranslatorInterface')
-) {
+if (!interface_exists('Symfony\\Component\\Translation\\TranslatorInterface')) {
     class_alias(
         'Symfony\\Contracts\\Translation\\TranslatorInterface',
         'Symfony\\Component\\Translation\\TranslatorInterface'
@@ -456,7 +454,7 @@ trait Localization
                 }
             }
 
-            $this->localTranslator = $translator;
+            $this->setLocalTranslator($translator);
         }
 
         return $this;
@@ -557,13 +555,17 @@ trait Localization
     public static function localeHasShortUnits($locale)
     {
         return static::executeWithLocale($locale, function ($newLocale, TranslatorInterface $translator) {
-            return ($newLocale && (($y = static::translateWith($translator, 'y')) !== 'y' && $y !== static::translateWith($translator, 'year'))) || (
-                ($y = static::translateWith($translator, 'd')) !== 'd' &&
+            return $newLocale &&
+                (
+                    ($y = static::translateWith($translator, 'y')) !== 'y' &&
+                    $y !== static::translateWith($translator, 'year')
+                ) || (
+                    ($y = static::translateWith($translator, 'd')) !== 'd' &&
                     $y !== static::translateWith($translator, 'day')
-            ) || (
-                ($y = static::translateWith($translator, 'h')) !== 'h' &&
+                ) || (
+                    ($y = static::translateWith($translator, 'h')) !== 'h' &&
                     $y !== static::translateWith($translator, 'hour')
-            );
+                );
         });
     }
 

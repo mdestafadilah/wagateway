@@ -40,23 +40,19 @@
                                             </li>
                                             <li class="nav-item" role="presentation">
 <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#imageMessage" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
-    Media Message
+    Image message
 </button>
                                             </li>
                                             <li class="nav-item" role="presentation">
 <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#buttonMessage" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Button Message </button>
                                             </li>
-                                          
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#documentMessage" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Document Message </button>
+                                            </li>
                                             <li class="nav-item" role="presentation">
                                                 <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#templateMessage" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Template Message </button>
                                             </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#listMessage" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">List Message </button>
                                             </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#generateQr" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Generate Qr</button>
-                                            </li>
-                                           
                                             <li class="nav-item" role="presentation">
                                                 <button class="nav-link active" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#webhook" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Webhook</button>
                                             </li>
@@ -105,8 +101,7 @@
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'sender'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Sender'</span>,
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'receiver'</span>,
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'message'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your caption'</span>,
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'url'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Url Media'</span>
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'type'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'audio / video / image / pdf / xls /xlsx /doc /docx /zip'</span><span style="color: #666666; font-style: italic;">//Choose One</span>
+                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'url'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Url image, jpg,png,jpeg'</span>
                                                     ];
                                                     $curl = curl_init();
                                                     
@@ -145,10 +140,8 @@
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'receiver'</span>,
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'message'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your message'</span>,
                                                         <span class="hljs-string" style="color: rgb(204, 147, 147);">'footer'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your footer message'</span>,
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'image'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'URL image '</span>, <span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'button1'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Button 1 '</span>, <span style="color: #666666; font-style: italic;">//REQUIRED ( Button minimal 1 )</span>
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'button2'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Button 2'</span>, <span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'button3'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Button 3'</span>,<span style="color: #666666; font-style: italic;">//OPTIONAL</span>
+                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'button1'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Button 1'</span>,
+                                                        <span class="hljs-string" style="color: rgb(204, 147, 147);">'button2'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Button 2'</span>
                                                     ];
                                                     $curl = curl_init();
                                                     
@@ -177,7 +170,42 @@
                                            
                                                 
                                             </div>
+                                            <div class="tab-pane fade" id="documentMessage" role="tabpanel" aria-labelledby="pills-contact-tab">
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(63, 63, 63); color: rgb(220, 220, 220);"><span class="xml"><span class="php"><span class="hljs-meta" style="color: rgb(127, 159, 127);">&lt;?php</span>
+
+    $data = [
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'api_key'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'{{Auth::user()->api_key}}'</span>,
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'sender'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Sender'</span>,
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'receiver'</span>,
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'url'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Document url (pdf,doc,docx,excel)'</span>
+    ];
+    $curl = curl_init();
+    
+    curl_setopt_array($curl, <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
+      CURLOPT_URL =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">{{url('/')}}/send-document</span>,
+      CURLOPT_RETURNTRANSFER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
+      CURLOPT_ENCODING =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">''</span>,
+      CURLOPT_MAXREDIRS =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">10</span>,
+      CURLOPT_TIMEOUT =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">0</span>,
+      CURLOPT_FOLLOWLOCATION =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
+      CURLOPT_HTTP_VERSION =&gt; CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'POST'</span>,
+      CURLOPT_POSTFIELDS =&gt; json_encode($data),
+      CURLOPT_HTTPHEADER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'Content-Type: application/json'</span>
+      ),
+    ));
+    
+    $response = curl_exec($curl);
+    
+    curl_close($curl);
+    <span class="hljs-keyword" style="color: rgb(227, 206, 171);">echo</span> $response;
+    
+    <span class="hljs-meta" style="color: rgb(127, 159, 127);">?&gt;</span></span></span></pre>
+    
                                            
+                                               
+                                            </div>
                                             <div class="tab-pane fade" id="templateMessage" role="tabpanel" aria-labelledby="pills-contact-tab">
 <pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(63, 63, 63); color: rgb(220, 220, 220);"><span class="xml"><span class="php"><span class="hljs-meta" style="color: rgb(127, 159, 127);">&lt;?php</span>
 
@@ -187,10 +215,8 @@
         <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'receiver'</span>,
         <span class="hljs-string" style="color: rgb(204, 147, 147);">'message'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your message'</span>,
         <span class="hljs-string" style="color: rgb(204, 147, 147);">'footer'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your footer message'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'image'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'URL image '</span>, <span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'template1'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'template 1 '</span>, <span style="color: #666666; font-style: italic;">//REQUIRED ( template minimal 1 )</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'template2'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'template 2'</span>, <span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'template3'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'template 3'</span>,<span style="color: #666666; font-style: italic;">//OPTIONAL</span>
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'template1'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'type|yourtext|linkOrNumber'</span>
+        <span class="hljs-string" style="color: rgb(204, 147, 147);">'template2'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'type|yourtext|linkOrNumber'</span>
     ];
     $curl = curl_init();
     
@@ -219,95 +245,6 @@
                                            
   
                                             </div>
-
-                                        {{-- List Message --}}
-                                            <div class="tab-pane fade" id="listMessage" role="tabpanel" aria-labelledby="pills-contact-tab">
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(63, 63, 63); color: rgb(220, 220, 220);"><span class="xml"><span class="php"><span class="hljs-meta" style="color: rgb(127, 159, 127);">&lt;?php</span>
-
-    $data = [
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'api_key'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'{{Auth::user()->api_key}}'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'sender'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Sender'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'receiver'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'message'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your message'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'footer'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Your footer message'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'name'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Name List '</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'title'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Title List '</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'list1'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'list 1 '</span>, <span style="color: #666666; font-style: italic;">//REQUIRED ( list minimal 1 )</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'list2'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'list 2'</span>, <span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'list3'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'list 3'</span>,<span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'list4'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'list 4'</span>,<span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'list5'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'list 5'</span>,<span style="color: #666666; font-style: italic;">//OPTIONAL</span>
-    ];
-    $curl = curl_init();
-    
-    curl_setopt_array($curl, <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
-      CURLOPT_URL =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">{{url('/')}}/send-list</span>,
-      CURLOPT_RETURNTRANSFER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
-      CURLOPT_ENCODING =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">''</span>,
-      CURLOPT_MAXREDIRS =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">10</span>,
-      CURLOPT_TIMEOUT =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">0</span>,
-      CURLOPT_FOLLOWLOCATION =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
-      CURLOPT_HTTP_VERSION =&gt; CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'POST'</span>,
-      CURLOPT_POSTFIELDS =&gt; json_encode($data),
-      CURLOPT_HTTPHEADER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'Content-Type: application/json'</span>
-      ),
-    ));
-    
-    $response = curl_exec($curl);
-    
-    curl_close($curl);
-    <span class="hljs-keyword" style="color: rgb(227, 206, 171);">echo</span> $response;
-    
-    <span class="hljs-meta" style="color: rgb(127, 159, 127);">?&gt;</span></span></span></pre>
-    
-                                           
-  
-                                            </div>
-                                            {{-- Generate qr --}}
-                                             {{-- List Message --}}
-                                            <div class="tab-pane fade" id="generateQr" role="tabpanel" aria-labelledby="pills-contact-tab">
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(63, 63, 63); color: rgb(220, 220, 220);"><span class="xml"><span class="php"><span class="hljs-meta" style="color: rgb(127, 159, 127);">&lt;?php</span>
-
-    <span style="color: #666666; font-style: italic;">//Type respon (json)</span>
-    <span style="color: #666666; font-style: italic;">// { "status" : "processing", "message" : "processing"  }</span>
-    <span style="color: #666666; font-style: italic;">// { "status" : true, "message" : "Already Connected"  }</span>
-    <span style="color: #666666; font-style: italic;">// { "status" : false, "qrcode" : "qr url",  "message" : "Please Scan qrcode"  }</span>
-
-    $data = [
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'api_key'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'{{Auth::user()->api_key}}'</span>,
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'number'</span> =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'Number'</span>,<span style="color: #666666; font-style: italic;">//the number you want to connect, will be added to the database if it is not registered.</span>
-       
-        ];
-    $curl = curl_init();
-    
-    curl_setopt_array($curl, <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
-      CURLOPT_URL =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">{{url('/')}}/generate-qr</span>,
-      CURLOPT_RETURNTRANSFER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
-      CURLOPT_ENCODING =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">''</span>,
-      CURLOPT_MAXREDIRS =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">10</span>,
-      CURLOPT_TIMEOUT =&gt; <span class="hljs-number" style="color: rgb(140, 208, 211);">0</span>,
-      CURLOPT_FOLLOWLOCATION =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">true</span>,
-      CURLOPT_HTTP_VERSION =&gt; CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST =&gt; <span class="hljs-string" style="color: rgb(204, 147, 147);">'POST'</span>,
-      CURLOPT_POSTFIELDS =&gt; json_encode($data),
-      CURLOPT_HTTPHEADER =&gt; <span class="hljs-keyword" style="color: rgb(227, 206, 171);">array</span>(
-        <span class="hljs-string" style="color: rgb(204, 147, 147);">'Content-Type: application/json'</span>
-      ),
-    ));
-    
-    $response = curl_exec($curl);
-    
-    curl_close($curl);
-    <span class="hljs-keyword" style="color: rgb(227, 206, 171);">echo</span> $response;
-    
-    <span class="hljs-meta" style="color: rgb(127, 159, 127);">?&gt;</span></span></span></pre>
-    
-                                           
-  
-                                            </div>
-                                            {{-- end generate qr --}}
                                             <pre class="tab-pane fade active show" id="webhook" role="tabpanel" aria-labelledby="pills-contact-tab">
                                               <pre class="php" style="font-family:monospace;"><span style="color: #000000; font-weight: bold;">&lt;?php</span> 
 &nbsp;

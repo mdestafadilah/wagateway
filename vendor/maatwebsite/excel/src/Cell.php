@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-/** @mixin SpreadsheetCell */
 class Cell
 {
     use DelegatedMacroable;

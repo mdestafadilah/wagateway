@@ -52,10 +52,6 @@
                     <span class="metadata"><span class="time"></span></span>
                   </div>
                   <div class="message sent">
-                    @if($image != null)
-                    <img src="{{$image}}" alt="" width="250px" height="150px"><br>
-                    @endif
-                 
                    {{$message}}<br>
                    @foreach ($buttons as $btn)
                        <button style="padding: 10px; border :0px; color:blue;" class="rounded text-dark my-2 bg-white">{{$btn->buttonText->displayText}}</button>

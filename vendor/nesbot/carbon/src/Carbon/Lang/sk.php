@@ -31,7 +31,6 @@
  * - jofi
  * - Jakub ADAMEC
  * - Marek Adamický
- * - AlterwebStudio
  */
 return [
     'year' => 'rok|:count roky|:count rokov',
@@ -47,12 +46,11 @@ return [
     'minute' => 'minútu|:count minúty|:count minút',
     'min' => ':count min',
     'second' => 'sekundu|:count sekundy|:count sekúnd',
-    'a_second' => 'pár sekúnd|:count sekundy|:count sekúnd',
     's' => ':count s',
     'ago' => 'pred :time',
-    'from_now' => 'o :time',
-    'after' => ':time po',
-    'before' => ':time pred',
+    'from_now' => 'za :time',
+    'after' => 'o :time neskôr',
+    'before' => ':time predtým',
     'year_ago' => 'rokom|:count rokmi|:count rokmi',
     'month_ago' => 'mesiacom|:count mesiacmi|:count mesiacmi',
     'week_ago' => 'týždňom|:count týždňami|:count týždňami',
@@ -75,7 +73,7 @@ return [
         'LLLL' => 'dddd D. MMMM YYYY HH:mm',
     ],
     'weekdays' => ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'],
-    'weekdays_short' => ['ned', 'pod', 'uto', 'str', 'štv', 'pia', 'sob'],
+    'weekdays_short' => ['ne', 'po', 'ut', 'st', 'št', 'pi', 'so'],
     'weekdays_min' => ['ne', 'po', 'ut', 'st', 'št', 'pi', 'so'],
     'months' => ['január', 'február', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december'],
     'months_short' => ['jan', 'feb', 'mar', 'apr', 'máj', 'jún', 'júl', 'aug', 'sep', 'okt', 'nov', 'dec'],

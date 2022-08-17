@@ -12,39 +12,24 @@
 namespace Carbon\Exceptions;
 
 use Carbon\CarbonInterface;
+use Exception;
 use InvalidArgumentException as BaseInvalidArgumentException;
-use Throwable;
 
 class NotACarbonClassException extends BaseInvalidArgumentException implements InvalidArgumentException
 {
-    /**
-     * The className.
-     *
-     * @var string
-     */
-    protected $className;
-
     /**
      * Constructor.
      *
      * @param string         $className
      * @param int            $code
-     * @param Throwable|null $previous
+     * @param Exception|null $previous
      */
-    public function __construct($className, $code = 0, Throwable $previous = null)
+    public function __construct($className, $code = 0, Exception $previous = null)
     {
-        $this->className = $className;
-
-        parent::__construct(sprintf('Given class does not implement %s: %s', CarbonInterface::class, $className), $code, $previous);
-    }
-
-    /**
-     * Get the className.
-     *
-     * @return string
-     */
-    public function getClassName(): string
-    {
-        return $this->className;
+        parent::__construct(sprintf(
+            'Given class does not implement %s: %s',
+            CarbonInterface::class,
+            $className
+        ), $code, $previous);
     }
 }

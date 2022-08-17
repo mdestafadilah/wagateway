@@ -4,7 +4,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\TextData;
 
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Concatenate
 {
@@ -90,7 +89,7 @@ class Concatenate
         $stringValue = Helpers::extractString($stringValue);
 
         if (!is_numeric($repeatCount) || $repeatCount < 0) {
-            return ExcelError::VALUE();
+            return Functions::VALUE();
         }
 
         return str_repeat($stringValue, (int) $repeatCount);

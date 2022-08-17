@@ -18,8 +18,6 @@ use League\CommonMark\Output\RenderedContentInterface;
 
 /**
  * Renders a parsed Document AST
- *
- * @deprecated since 2.3; use {@link DocumentRendererInterface} instead
  */
 interface MarkdownRendererInterface
 {

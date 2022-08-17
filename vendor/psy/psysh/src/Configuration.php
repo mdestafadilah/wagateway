@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -816,11 +816,9 @@ class Configuration
                 return Readline\GNUReadline::class;
             } elseif (Readline\Libedit::isSupported()) {
                 return Readline\Libedit::class;
+            } elseif (Readline\HoaConsole::isSupported()) {
+                return Readline\HoaConsole::class;
             }
-        }
-
-        if (Readline\Userland::isSupported()) {
-            return Readline\Userland::class;
         }
 
         return Readline\Transient::class;
@@ -1124,7 +1122,7 @@ class Configuration
                 $this->getOutputVerbosity(),
                 null,
                 null,
-                $this->getPager() ?: null
+                $this->getPager()
             ));
 
             // This is racy because `getOutputDecorated` needs access to the
@@ -1179,19 +1177,13 @@ class Configuration
      * If a string is supplied, a ProcOutputPager will be used which shells out
      * to the specified command.
      *
-     * `cat` is special-cased to use the PassthruPager directly.
-     *
      * @throws \InvalidArgumentException if $pager is not a string or OutputPager instance
      *
-     * @param string|OutputPager|false $pager
+     * @param string|OutputPager $pager
      */
     public function setPager($pager)
     {
-        if ($pager === null || $pager === false || $pager === 'cat') {
-            $pager = false;
-        }
-
-        if ($pager !== false && !\is_string($pager) && !$pager instanceof OutputPager) {
+        if ($pager && !\is_string($pager) && !$pager instanceof OutputPager) {
             throw new \InvalidArgumentException('Unexpected pager instance');
         }
 
@@ -1204,21 +1196,17 @@ class Configuration
      * If no Pager has been explicitly provided, and Pcntl is available, this
      * will default to `cli.pager` ini value, falling back to `which less`.
      *
-     * @return string|OutputPager|false
+     * @return string|OutputPager
      */
     public function getPager()
     {
         if (!isset($this->pager) && $this->usePcntl()) {
-            if (\getenv('TERM') === 'dumb') {
-                return false;
-            }
-
             if ($pager = \ini_get('cli.pager')) {
                 // use the default pager
                 $this->pager = $pager;
             } elseif ($less = \exec('which less 2>/dev/null')) {
                 // check for the presence of less...
-                $this->pager = $less.' -R -F -X';
+                $this->pager = $less.' -R -S -F -X';
             }
         }
 
@@ -1385,7 +1373,7 @@ class Configuration
     {
         if (!isset($this->manualDb)) {
             $dbFile = $this->getManualDbFile();
-            if ($dbFile !== null && \is_file($dbFile)) {
+            if (\is_file($dbFile)) {
                 try {
                     $this->manualDb = new \PDO('sqlite:'.$dbFile);
                 } catch (\PDOException $e) {

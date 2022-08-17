@@ -253,7 +253,7 @@ class LfmPath
             $validator->nameIsNotDuplicate($this->getNewName($file), $this);
         }
 
-        $validator->isNotExcutable(config('lfm.disallowed_mimetypes', ['text/x-php', 'text/html', 'text/plain']));
+        $validator->isNotExcutable();
 
         if (config('lfm.should_validate_mime', false)) {
             $validator->mimeTypeIsValid($this->helper->availableMimeTypes());

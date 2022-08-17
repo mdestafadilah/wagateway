@@ -9,8 +9,8 @@
                      </span>
                      <input id="thumbnail" class="form-control"  type="text" name="image" readonly>
                    </div>
-                    <label for="caption" class="form-label">Caption</label>
-                    <input type="text" name="caption" class="form-control" id="caption" required>
+                    <label for="Caption" class="form-label">Caption</label>
+                    <input type="text" name="caption" class="form-control" id="Caption" required>
 
                     <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 <script>

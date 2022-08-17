@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class ChiSquared
 {
@@ -43,14 +42,14 @@ class ChiSquared
         }
 
         if ($degrees < 1) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         if ($value < 0) {
             if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
                 return 1;
             }
 
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         return 1 - (Gamma::incompleteGamma($degrees / 2, $value / 2) / Gamma::gammaValue($degrees / 2));
@@ -87,14 +86,14 @@ class ChiSquared
         }
 
         if ($degrees < 1) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         if ($value < 0) {
             if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
                 return 1;
             }
 
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         if ($cumulative === true) {
@@ -133,7 +132,7 @@ class ChiSquared
         }
 
         if ($degrees < 1) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         $callback = function ($value) use ($degrees) {
@@ -174,7 +173,7 @@ class ChiSquared
         }
 
         if ($degrees < 1) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         return self::inverseLeftTailCalculation($probability, $degrees);
@@ -202,15 +201,15 @@ class ChiSquared
         $countActuals = count($actual);
         $countExpected = count($expected);
         if ($countActuals !== $countExpected || $countActuals === 1) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
 
         $result = 0.0;
         for ($i = 0; $i < $countActuals; ++$i) {
             if ($expected[$i] == 0.0) {
-                return ExcelError::DIV0();
+                return Functions::DIV0();
             } elseif ($expected[$i] < 0.0) {
-                return ExcelError::NAN();
+                return Functions::NAN();
             }
             $result += (($actual[$i] - $expected[$i]) ** 2) / $expected[$i];
         }
@@ -281,7 +280,6 @@ class ChiSquared
     // Relative error controlled by the eps parameter
     private static function gser($n, $x)
     {
-        /** @var float */
         $gln = Gamma::ln($n / 2);
         $a = 0.5 * $n;
         $ap = $a;
@@ -305,7 +303,6 @@ class ChiSquared
     // Relative error controlled by the eps parameter
     private static function gcf($n, $x)
     {
-        /** @var float */
         $gln = Gamma::ln($n / 2);
         $a = 0.5 * $n;
         $b = $x + 1 - $a;

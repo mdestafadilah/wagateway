@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blast;
-use App\Models\Campaign;
 use App\Models\Contact;
 use App\Models\Number;
 use App\Models\Schedule;
@@ -13,15 +12,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+
 
 class BlastController extends Controller
 {
+    public function index(){
    
-    public function histories($campaign_id){
-      $blasts = Blast::where('campaign_id', $campaign_id)->whereUserId(Auth::id())->get();
+      
+        return view('pages.blast',[
+
+          
+        ]);
+        
+    }
+    public function histories(){
+        $h = Blast::where('user_id',Auth::user()->id)
+        ->orderBy('created_at','desc')->get();
         return view('pages.blast-histories',[
-            'histories' => $blasts->all() //Auth::user()->blasts()->latest()->get()
+            'histories' => $h //Auth::user()->blasts()->latest()->get()
         ]);
     }
 
@@ -73,16 +81,14 @@ class BlastController extends Controller
      
         if($request->ajax()){
             $destination = [];
-            $destination = $this->getNumberbyTag($request->tag);
+
+            $dN = [  
+                'sender' => $request->sender,
+                'api_key' => Auth::user()->api_key,
+                'delay' => $request->delay
+               ];
+               $destination = $this->getNumberbyTag($request->tag);
              
-        if(Auth::user()->is_expired_subscription){
-                session()->flash('alert', [
-                    'type' => 'danger',
-                    'msg' => 'Your subscription has expired. Please renew your subscription.',
-                ]);
-            return 'false';
-        }
-              
           if(count($destination) === 0 || count($destination) > Auth::user()->chunk_blast){
             session()->flash('alert',[
                 'type' => 'danger',
@@ -92,6 +98,8 @@ class BlastController extends Controller
           }
         
                 $numAndMsg = [];
+             
+
                 $cek = Number::whereBody($request->sender)->first();
                 if($cek->status !== 'Connected'){
                     session()->flash('alert',[
@@ -101,244 +109,154 @@ class BlastController extends Controller
                     return 'false';
                 }
                
+            if(strpos($request->message,'{name}')){
+               
+                    foreach ($destination as $d) {
+                    // return $d;
+                        $name = Contact::whereNumber($d)->first('name')->name;
+                    
+                       $numAndMsg[] = [
+                           'number' => $d,
+                           'msg' => str_replace('{name}',$name,$request->message)
+                       ];
+                    }
+                  
+            } else {
+                foreach ($destination as $d) {
+                   
+                   $numAndMsg[] = [
+                       'number' => $d,
+                       'msg' => $request->message
+                   ];
+                }
+            }
+          
+          // insert to database
 
-            // create text 
-            switch ($request->type_message) {
+$send = '';
+            switch ($request->type) {
                 case 'text':
-                    $msg = ["text" => $request->message];
+                   $nm = [
+                        'type' => 'text',
+                        'data' => $numAndMsg
+                   ];
+                   $data = array_merge($dN,$nm);
+                   if($request->tipe === 'schedule'){
+                       Schedule::create([
+                           'user_id' => Auth::user()->id,
+                           'type' => 'text',
+                           'sender' => $request->sender,
+                           'numbers' => json_encode($destination),
+                           'text' => $request->message,
+                           'datetime' => $request->datetime
+                       ]);
+                   } 
+               
+                   break;
+                case 'image' :
+                    $nm = [
+                        'type' => 'image',
+                        'data' => $numAndMsg
+                    ];
+                    $nm['data'] = [
+                        'image' => $request->image,
+                        'data' => $numAndMsg
+                     ];
+                   $data = array_merge($dN,$nm);
+                   if($request->tipe === 'schedule'){
+                    Schedule::create([
+                        'user_id' => Auth::user()->id,
+                        'sender' => $request->sender,
+                        'type' => 'image',
+                        'numbers' => json_encode($destination),
+                        'text' => $request->message,
+                        'media' => $request->image,
+                        'datetime' => $request->datetime
+                    ]);
+                } 
+            
+                 
+            
                     break;
-                case 'image':
-                   
-                    $arr = explode('.', $request->image);
-                    $ext = end($arr);
-                    $allowext = ['jpg', 'png', 'jpeg'];
-                    if (!in_array($ext, $allowext)) {
-                        return response()->json([
-                            'status' => 'error',
-                            'msg' => 'File type not allowed'
+                case 'button' :
+                    $nm = [
+                        'type' => 'button',
+                        'data' => $numAndMsg
+                    ];
+                    $nm['data'] = [
+                        'footer' => $request->footer,
+                        'button1' => $request->button1,
+                        'button2' => $request->button2,
+                        'data' => $numAndMsg
+                     ];
+                     $data = array_merge($dN,$nm);
+                     if($request->tipe === 'schedule'){
+                        Schedule::create([
+                            'user_id' => Auth::user()->id,
+                            'sender' => $request->sender,
+                            'type' => 'button',
+                            'numbers' => json_encode($destination),
+                            'text' => $request->message,
+                            'footer' => $request->footer,
+                            'button1' => $request->button1,
+                            'button2' => $request->button2,
+                            'datetime' => $request->datetime
                         ]);
-                    }
-                    $msg = [
-                        "image" => ["url" => $request->image],
-                        "caption" => $request->message ?? ''
-                    ];
+                    } 
+
                     break;
-                case 'button':
-                   
-                    if ($request->image) {
-                        $arr = explode('.', $request->image);
-                        $ext = end($arr);
-                        $allowext = ['jpg', 'png', 'jpeg'];
-                        if (!in_array($ext, $allowext)) {
-                            
-                            session()->flash('alert', [
-                                'type' => 'danger',
-                                'msg' => 'Image type not allowed'
-                            ]);
-                            return false;
-                        }
-                    }
-                   
-                    $buttons = [
-                        ["buttonId" => "id1", "buttonText" => ["displayText" => $request->button1], "type" => 1],
+                case 'template' :
+
+                    $nm = [
+                        'type' => 'template',
+                        'data' => $numAndMsg
                     ];
-                    // add if exist button2
-                    if ($request->button2) {
-                        $buttons[] = ["buttonId" => "id2", "buttonText" => ["displayText" => $request->button2], "type" => 1];
-                    }
-                    // add if exist button3
-                    if ($request->button3) {
-                        $buttons[] = ["buttonId" => "id3", "buttonText" => ["displayText" => $request->button3], "type" => 1];
-                    }
-                    $buttonMessage = [
-                        "text" => $request->message,
-                        "footer" => $request->footer ?? '',
-                        "buttons" => $buttons,
-                        "headerType" => 1
-                    ];
-                   
-                    //add image to buttonMessage if exists
-                    if ($request->image) {
-                        unset($buttonMessage['text']);
-                        $buttonMessage['caption'] = $request->message;
-                        $buttonMessage['image'] = ["url" => $request->image];
-                        $buttonMessage['headerType'] = 4;
-                    }
-                    $msg = $buttonMessage;
-                    break;
-                case 'template':
-                    try {
-
-                        if ($request->image) {
-                            $arr = explode('.', $request->image);
-                            $ext = end($arr);
-                            $allowext = ['jpg', 'png', 'jpeg'];
-                            if (!in_array($ext, $allowext)) {
-
-                                session()->flash('alert', [
-                                    'type' => 'danger',
-                                    'msg' => 'Image type not allowed'
-                                ]);
-                                return false;
-                            }
-                        }
-                        $templateButtons = [];
-                        $template1 = $this->makeTemplateButton($request->template1, 1);
-                        $templateButtons[] = $template1;
-                        // if exist template2
-                        if ($request->template2) {
-                            $template2 = $this->makeTemplateButton($request->template2, 2);
-                            $templateButtons[] = $template2;
-                        }
-                        // if exist template3
-                        if ($request->template3) {
-                            $template3 = $this->makeTemplateButton($request->template3, 3);
-                            $templateButtons[] = $template3;
-                        }
-
-
-                        $templateMessage = [
-                            "text" => $request->message,
-                            "footer" => $request->footer ?? '',
-                            "templateButtons" => $templateButtons
-                        ];
-                        //add image to templateMessage if exists
-                        if ($request->image) {
-                            unset($templateMessage['text']);
-                            $templateMessage['caption'] = $request->message;
-                            $templateMessage['image'] = ["url" => $request->image];
-                        }
-                        $msg = $templateMessage;
-                    } catch (\Throwable $th) {
-                        Log::error($th->getMessage());
-                        session()->flash('alert', [
-                            'type' => 'danger',
-                            'msg' => 'ups,error occured!'
+                    $nm['data'] = [
+                        'footer' => $request->footer,
+                        'template1' => $request->template1,
+                        'template2' => $request->template2,
+                        'data' => $numAndMsg
+                     ];
+                     $data = array_merge($dN,$nm);
+                     if($request->tipe === 'schedule'){
+                        Schedule::create([
+                            'user_id' => Auth::user()->id,
+                            'sender' => $request->sender,
+                            'type' => 'template',
+                            'numbers' => json_encode($destination),
+                            'text' => $request->message,
+                            'footer' => $request->footer,
+                            'button1' => $request->template1,
+                            'button2' => $request->template2,
+                            'datetime' => $request->datetime
                         ]);
-                        return true;
-                    }
-
+                    } 
+                    
                     break;
-                    case 'list':
-                case 'list':
-                    if(!$request->list1){
-                        session()->flash('alert', [
-                            'type' => 'danger',
-                            'msg' => 'Please select a list minimum 1!'
-                        ]);
-                        return 'false';
-                    }
-
-                    $section  = [
-                            "title" => $request->titlelist,
-                        ];
-                    $i = 1;
-                    $section['rows'][] = ['title' => $request->list1,'rowId' => 1,'description' => ''];
-                    if($request->list2){
-                        $section['rows'][] = ['title' => $request->list2,'rowId' => 2,'description' => ''];
-                    }
-                    if($request->list3){
-                        $section['rows'][] = ['title' => $request->list3,'rowId' => 3,'description' => ''];
-                    }
-                    if($request->list4){
-                        $section['rows'][] = ['title' => $request->list4,'rowId' => 4,'description' => ''];
-                    }
-                    if($request->list5){
-                        $section['rows'][] = ['title' => $request->list5,'rowId' => 5,'description' => ''];
-                    }
-                    // foreach ($request->list as $menu) {
-                    //     $i++;
-                    //     $section['rows'][] = [
-                    //         'title' => $menu,
-                    //         'rowId' => 'id' . $i,
-                    //         'description' => '',
-                    //     ];
-                    // }
-
-                    $listMessage = [
-                        "text" => $request->message,
-                        "footer" => $request->footer ?? '',
-                        'title' => $request->namelist,
-                        'buttonText' => $request->buttonlist,
-                        "sections" => [$section]
-                    ];
-
-                    $msg = $listMessage;
-                    break;
-                
                 default:
                     # code...
                     break;
             }
 
-        
+
+            // insert to the database
            
-          $data = [];
-          $campaign = Campaign::create([
-            'user_id' => Auth::user()->id,
-            'sender' => $request->sender,
-            'name' => $request->name,
-            'tag' => $request->tag,
-            'type' => $request->type_message,
-            'message' => json_encode($msg),
-            'status' => 'waiting',
-            'schedule' => $request->start_date,
-
-          ]);
-        // foreach destination and push to data
-        foreach($destination as $d){
-                $contact = Contact::whereNumber($d)->first();
-                // replace {name} to name contact if there is name
-               // if ($contact) {
-                    $message = str_replace('{name}', $contact->name, $msg);
-                //}
-
-           $data[] = [
-                'sender' => $request->sender,
-                'user_id' => Auth::user()->id,
-                'campaign_id' => $campaign->id,
-                'receiver' => $d,
-                'message' => json_encode($message),
-                'type' => $request->type_message,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-        }
-
-       
-         $blasts = Blast::insert($data);
-        if($request->start_date != null){
-        
-            $campaign->update([
-                'status' => 'waiting'
+           if($request->tipe === 'immediately'){
+               $send = $this->sendBlast($data);
+               $res = json_decode($send);
+               session()->flash('alert',[
+                   'type' => $res->status === true ? 'success' : 'danger',
+                   'msg' => $res->msg
+               ]);
+                return $send;
+           } else {
+               
+               session()->flash('alert',[
+                'type' => 'success',
+                'msg' => 'The message has scheduled.'
             ]);
-                session()->flash('alert', [
-                    'type' => 'success',
-                    'msg' =>'Blast message scheduled successfully'
-                ]);
-                return true;
-        }else{
-
-            $result = $this->sendBlast($data,$request->delay,$campaign);
-          
-            if(json_decode($result)->status){
-                $campaign->update([
-                    'status' => 'executed'
-                ]);
-                session()->flash('alert', [
-                    'type' => 'success',
-                    'msg' => json_decode($result)->message
-                ]);
-            }else{
-               $campaign->delete();
-                session()->flash('alert', [
-                    'type' => 'danger',
-                    'msg' => json_decode($result)->message
-                ]);
-            }
-            return true;
-            }
+             return 'true';
+           }
 
           
         }
@@ -346,22 +264,17 @@ class BlastController extends Controller
 
 
 
-    public function sendBlast($data,$delay,$campaign){
+    public function sendBlast($data){
         try {
             //code...
-            return Http::withOptions(['verify' => false])->asForm()->post(env('WA_URL_SERVER').'/backend-blast',[
-                'data' => json_encode($data),
-                'delay' => $delay
-
-            ]);
+            return Http::asForm()->post(env('WA_URL_SERVER').'/backend-blast',$data);
                 
         } catch (\Throwable $th) {
-            $campaign->delete();
             session()->flash('alert',[
                 'type' => 'danger',
                 'msg' => 'There is trouble in your node server'
             ]);
-           return false;
+            return 'false';
         }
     }
     public function getAllnumbers(){
@@ -386,25 +299,14 @@ class BlastController extends Controller
     }
 
 
-
-    public function makeTemplateButton($templateButton, $no)
-    {
-        $allowType = ['callButton', 'urlButton'];
-        $template = $templateButton;
-        $type = explode('|', $template)[0] . 'Button';
-        $text = explode('|', $template)[1];
-        $urlOrNumber = explode('|', $template)[2];
-
-        if (!in_array($type, $allowType)) {
-            return redirect(route('autoreply'))->with('alert', [
-                'type' => 'danger',
-                'msg' => 'The Templates are not valid!'
-            ]);
-        }
-
-        $typePurpose = explode('|', $template)[0] === 'url' ? 'url' : 'phoneNumber';
-        return ["index" => $no, $type => ["displayText" => $text, $typePurpose => $urlOrNumber]];
+    public function destroy(Request $request){
+        Auth::user()->blasts()->delete();
+       return back()->with('alert',[
+            'type' => 'success',
+            'msg' => 'All Histories deleted'
+        ]);
     }
+
 
 
     public function scheduled(){

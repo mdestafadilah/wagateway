@@ -38,7 +38,6 @@ use PHPUnit\Runner\BaseTestRunner;
 use PHPUnit\Runner\Filter\Factory;
 use PHPUnit\Runner\PhptTestCase;
 use PHPUnit\Util\FileLoader;
-use PHPUnit\Util\Reflection;
 use PHPUnit\Util\Test as TestUtil;
 use ReflectionClass;
 use ReflectionException;
@@ -220,7 +219,15 @@ class TestSuite implements IteratorAggregate, Reorderable, SelfDescribing, Test
             return;
         }
 
-        foreach ((new Reflection)->publicMethodsInTestClass($theClass) as $method) {
+        foreach ($theClass->getMethods() as $method) {
+            if ($method->getDeclaringClass()->getName() === Assert::class) {
+                continue;
+            }
+
+            if ($method->getDeclaringClass()->getName() === TestCase::class) {
+                continue;
+            }
+
             if (!TestUtil::isTestMethod($method)) {
                 continue;
             }

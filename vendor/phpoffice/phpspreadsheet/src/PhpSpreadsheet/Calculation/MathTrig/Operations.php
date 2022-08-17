@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Operations
 {
@@ -76,10 +75,10 @@ class Operations
 
         // Validate parameters
         if (!$x && !$y) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         if (!$x && $y < 0.0) {
-            return ExcelError::DIV0();
+            return Functions::DIV0();
         }
 
         // Return
@@ -115,7 +114,7 @@ class Operations
                     $returnValue *= $arg;
                 }
             } else {
-                return ExcelError::VALUE();
+                return Functions::VALUE();
             }
         }
 

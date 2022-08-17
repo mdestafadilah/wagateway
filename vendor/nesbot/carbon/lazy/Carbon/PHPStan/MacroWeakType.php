@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Carbon\PHPStan;
 
 if (!class_exists(LazyMacro::class, false)) {
-    abstract class LazyMacro extends AbstractReflectionMacro
+    abstract class LazyMacro extends AbstractMacro
     {
         /**
          * {@inheritdoc}

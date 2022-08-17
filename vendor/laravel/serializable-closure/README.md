@@ -51,8 +51,7 @@ echo $closure(); // james;
 
 ### Caveats
 
-1. Creating **anonymous classes** within closures is not supported.
-2. Using attributes within closures is not supported.
+Creating **anonymous classes** within closures is not supported.
 
 ## Contributing
 

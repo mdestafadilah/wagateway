@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -43,7 +42,6 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
         ],
     ];
 
@@ -66,7 +64,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'isVerifiedLicense' => \App\Http\Middleware\isVerifiedLicense::class,
         'installed.app' => \App\Http\Middleware\appInstalled::class,
-        'checkApiKey' => \App\Http\Middleware\CheckApiKey::class,
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 }
+?>

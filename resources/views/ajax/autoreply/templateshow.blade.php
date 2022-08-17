@@ -53,35 +53,51 @@
                     <span class="metadata"><span class="time"></span></span>
                   </div>
                   <div class="message sent">
-                  @if($image != null)
-                    <img src="{{$image}}" alt="" width="250px" height="150px"><br>
-                    @endif
-                 
                    {{$message}}<br>
                    <span class="footertext">{{$footer}}</span>
                    <hr>
-                   @foreach($templates as $template)
-                   <?php
-                 
-  if(property_exists($template,'urlButton')){
-                   $button = [
+                   <?php 
+                   if(property_exists($template1,'urlButton')){
+    $button1 = [
                        'icon' => 'bi bi-box-arrow-up-right',
                        'type' => 'url',
-                       'text' => $template->urlButton->displayText
+                       'text' => $template1->urlButton->displayText
                    ] ;
-                   } else {
-                   $button = [
+}else {
+    $button1 = [
                        'icon' => 'bi bi-telephone',
                        'type' => 'call',
-                       'text' => $template->callButton->displayText
+                       'text' => $template1->callButton->displayText
+                   ] ;
+}
+     
+                   
+                   if(property_exists($template2,'urlButton')){
+                   $button2 = [
+                       'icon' => 'bi bi-box-arrow-up-right',
+                       'type' => 'url',
+                       'text' => $template2->urlButton->displayText
+                   ] ;
+                   } else {
+                   $button2 = [
+                       'icon' => 'bi bi-telephone',
+                       'type' => 'call',
+                       'text' => $template2->callButton->displayText
                    ] ;
                    }
                    
                    
-                   
-                  ?>
-                    <button style="padding: 10px; border :0px; color:blue;" class="rounded text-dark  bg-white">
-                   @if ($button['type'] == 'call')
+                   ?>
+
+
+                
+                  
+
+
+                 
+                
+                       <button style="padding: 10px; border :0px; color:blue;" class="rounded text-dark  bg-white">
+                   @if ($button1['type'] == 'call')
                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
                     <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
                   </svg>
@@ -91,20 +107,21 @@
                         <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
                       </svg>
                    @endif
-                        {{$button['text']}}
+                        {{$button1['text']}}
                     </button><br>
-                   @endforeach 
-                   
-                   
-
-                
-                  
-
-
-                 
-                
-                      
-                
+                       <button style="padding: 10px; border :0px; color:blue;"  class="rounded text-dark  bg-white">
+                   @if ($button2['type'] == 'call')
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                  </svg>
+                       @else
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                      </svg>
+                   @endif
+                        {{$button2['text']}}
+                    </button>
                   
                    <br>
                  

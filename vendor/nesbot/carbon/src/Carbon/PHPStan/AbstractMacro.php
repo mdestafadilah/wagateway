@@ -205,6 +205,16 @@ abstract class AbstractMacro implements BuiltinMethodReflection
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getReflection(): ?ReflectionMethod
+    {
+        return $this->reflectionFunction instanceof ReflectionMethod
+            ? $this->reflectionFunction
+            : null;
+    }
+
     public function getTentativeReturnType(): ?ReflectionType
     {
         return null;

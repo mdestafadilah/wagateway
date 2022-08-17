@@ -108,7 +108,7 @@ class EventDispatcher implements EventDispatcherInterface
                     $v[0] = $v[0]();
                     $v[1] = $v[1] ?? '__invoke';
                 }
-                if ($v === $listener || ($listener instanceof \Closure && $v == $listener)) {
+                if ($v === $listener) {
                     return $priority;
                 }
             }
@@ -164,7 +164,7 @@ class EventDispatcher implements EventDispatcherInterface
                     $v[0] = $v[0]();
                     $v[1] = $v[1] ?? '__invoke';
                 }
-                if ($v === $listener || ($listener instanceof \Closure && $v == $listener)) {
+                if ($v === $listener) {
                     unset($listeners[$k], $this->sorted[$eventName], $this->optimized[$eventName]);
                 }
             }

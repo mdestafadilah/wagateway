@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\Calculation\Financial\Constants as FinancialConstan
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\Coupons;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\Helpers;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Price
 {
@@ -271,7 +270,7 @@ class Price
         }
 
         if ($investment <= 0) {
-            return ExcelError::NAN();
+            return Functions::NAN();
         }
         $daysBetweenSettlementAndMaturity = DateTimeExcel\YearFrac::fraction($settlement, $maturity, $basis);
         if (!is_numeric($daysBetweenSettlementAndMaturity)) {

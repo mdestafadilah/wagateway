@@ -47,23 +47,16 @@ class TagController extends Controller
 
     public function fetchGroups(Request $request){
        try {
-        $number = Number::whereBody($request->sender)->first();
-        if($number->status != 'Connected'){
-                return back()->with('alert', [
-                    'type' => 'danger',
-                    'msg' => 'Your sender is not connected!'
-                ]);
-            }
-           $fetch =Http::withOptions(['verify' => false])->asForm()->post(env('WA_URL_SERVER').'/backend-getgroups',['token' => $request->sender]);
+           $fetch =Http::withOptions(['verify' => false])->asForm()->post(env('WA_URL_SERVER').'/backend-getgroups',['sender' => $request->sender]);
           $respon = json_decode($fetch->body());
 
        if($respon->status === false){
         return back()->with('alert',[
             'type' => 'danger',
-            'msg' => $respon->message
+            'msg' => $respon->msg
         ]);
        }
-                foreach ($respon->data as $group) {
+                foreach ($respon->groups as $group) {
                     $tag = Tag::firstOrCreate(['user_id'=> Auth::user()->id,'name' => $group->subject .'( '.$group->id.' )']);
                     
                    foreach ($group->participants as $member) {
