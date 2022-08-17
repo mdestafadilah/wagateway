@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@adiwajshing/baileys": "github:adiwajshing/baileys",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "node-cron": "^3.0.1",
+    "pino": "^8.3.0",
+    "pino-pretty": "^8.1.0",
+    "qrcode": "^1.5.1",
+    "socket.io": "^4.5.1"
+  },
+  "name": "wamd",
+  "version": "4.0.1",
+  "description": "Whatsapp remote API multi device, multi instance. Based on baileys. Wanna more support contact me https://m-pedia.co.id ||  https://wa.me/6282298859671",
+  "main": "server.js",
+  "author": "M Pedia <ilmansunannudin2@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "win-dev": "set NODE_ENV=development&&nodemon src/index",
+    "dev": "NODE_ENV=development node src/index",
+    "start": "NODE_ENV=production node src/index"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "credentials/*"
+    ]
+  }
+}
